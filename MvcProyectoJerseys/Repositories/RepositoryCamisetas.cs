@@ -7,10 +7,12 @@ namespace MvcProyectoJerseys.Repositories
     public class RepositoryCamisetas
     {
         private CamisetasContext context;
+        private IWebHostEnvironment hostEnvironment;
 
-        public RepositoryCamisetas(CamisetasContext context)
+        public RepositoryCamisetas(CamisetasContext context, IWebHostEnvironment hostEnvironment = null)
         {
             this.context=context;
+            this.hostEnvironment=hostEnvironment;
         }
         public Usuario? LoginUsuario(string username, string contrasena)
         {
@@ -31,7 +33,7 @@ namespace MvcProyectoJerseys.Repositories
             var consulta = from datos in this.context.Camisetas
                            where datos.IdUsuario== 2
                            select datos;
-            
+
             List<Camiseta> camisetas = new List<Camiseta>();
             Console.WriteLine(consulta);
             foreach (var row in consulta)
@@ -77,6 +79,14 @@ namespace MvcProyectoJerseys.Repositories
             this.context.SaveChanges();
         }
 
+        public void EditarPerfil(Usuario usuario)
+        {
+            this.context.Usuarios.Update(usuario);
+            this.context.SaveChanges();
+
+        }
+
+        
 
     }
 }

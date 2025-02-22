@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using MvcProyectoJerseys.Data;
+using MvcProyectoJerseys.Helpers;
 using MvcProyectoJerseys.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +11,7 @@ builder.Services.AddControllersWithViews();
 string connectionString = builder.Configuration.GetConnectionString("SqlCamisetas");
 builder.Services.AddTransient<RepositoryCamisetas>();
 builder.Services.AddDbContext<CamisetasContext>(options => options.UseSqlServer(connectionString));
+builder.Services.AddSingleton<HelperPathProvider>();
 
 
 var app = builder.Build();
@@ -23,6 +25,7 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();

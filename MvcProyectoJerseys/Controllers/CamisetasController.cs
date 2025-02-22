@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using MvcProyectoJerseys.Helpers;
 using MvcProyectoJerseys.Models;
 using MvcProyectoJerseys.Repositories;
 
@@ -7,9 +8,11 @@ namespace MvcProyectoJerseys.Controllers
     public class CamisetasController : Controller
     {
         RepositoryCamisetas repo;
-        public CamisetasController(RepositoryCamisetas repo)
+        HelperPathProvider helper;
+        public CamisetasController(RepositoryCamisetas repo, HelperPathProvider helper)
         {
             this.repo = repo;
+            this.helper=helper;
         }
         public IActionResult Index()
         {
@@ -48,6 +51,25 @@ namespace MvcProyectoJerseys.Controllers
             camiseta.Imagen = imagen;
             this.repo.ModificarCamiseta(camiseta);
             return RedirectToAction("PerfilUsuario", new { idUsuario = camiseta.IdUsuario });
+        }
+        
+
+        public IActionResult SubirImagenPerfil()
+        {
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> SubirImagenPerfil(IFormFile file)
+        {
+            string fileName = file.FileName;
+            string path = this.helper.MapPath(fileName, Folders.Avatar);
+            using (Stream stream = new FileStream(path, FileMode.Create))
+            {
+
+                await file.CopyToAsync(stream);
+            }
+            ViewData["IMAGENPERFIL"]=this.helper.MapUrlPath(fileName, Folders.Avatar);
+            return View();
         }
         
         
