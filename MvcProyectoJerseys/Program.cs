@@ -7,7 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-
+builder.Services.AddHttpContextAccessor();
 string connectionString = builder.Configuration.GetConnectionString("SqlCamisetas");
 builder.Services.AddTransient<RepositoryCamisetas>();
 builder.Services.AddDbContext<CamisetasContext>(options => options.UseSqlServer(connectionString));

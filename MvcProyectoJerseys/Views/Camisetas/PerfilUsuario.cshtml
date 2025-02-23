@@ -2,6 +2,9 @@
 @{
     List<Camiseta> camisetas = ViewData["CAMISETAS"] as List<Camiseta>;
 }
+@{
+    CamisetaComentarios c = ViewData["CAMISETACOMENTARIOS"] as CamisetaComentarios;
+}
 <h1>Perfil Usuario</h1>
 <h2>@Model.UserName</h2>
 
@@ -20,7 +23,9 @@
                             }
                             <div class="d-flex justify-content-between align-items-center">
                                 <div class="btn-group">
-                                    <button type="button" class="btn btn-sm btn-outline-primary">View</button>
+                                    <a class="btn btn-sm btn-outline-primary" 
+                                        asp-controller="Camisetas" asp-action="DetallesCamiseta" asp-route-idCamiseta="3"
+                                    >View</a>
                                     <button type="button" class="btn btn-sm btn-outline-secondary">Archivar</button>
                                 </div>
                                 <small class="text-body-secondary">9 mins</small>
@@ -32,3 +37,25 @@
         </div>
     </div>
 </div>
+
+@if(ViewData["CAMISETACOMENTARIOS"]!=null){
+    <ul>
+        <li>
+            @c.Camiseta.Equipo
+        </li>
+        <li>
+            @c.Camiseta.IdUsuario
+        </li>
+        <li>
+            @c.Camiseta.Marca
+        </li>
+        @foreach(Comentario comentario in c.Comentarios){
+
+            <li>
+                @comentario
+            </li>
+        }
+
+        
+    </ul>
+}

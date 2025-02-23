@@ -1,0 +1,37 @@
+﻿@model CamisetaComentarios
+
+<h1>Camiseta COmentarios</h1>
+<ul>
+    <li>
+        @Model.Camiseta.IdCamiseta
+    </li>
+    <li>
+        @Model.Camiseta.IdUsuario
+    </li>
+    <li>
+        @Model.Camiseta.Equipo
+    </li>
+    <li>
+        @Model.Camiseta.Pais
+    </li>
+    <li>
+        @Model.Camiseta.Marca
+    </li>
+    <li>
+        @Model.Camiseta.Year
+    </li>
+    <li>
+        @Model.Camiseta.Condicion
+    </li>
+    @foreach(Comentario c in Model.Comentarios){
+        <li>
+            @c.UsuarioId
+        </li>
+        <li>
+            @c.ComentarioTxt
+        </li>
+        <li>
+            @c.FechaComentario
+        </li>
+    }
+</ul>

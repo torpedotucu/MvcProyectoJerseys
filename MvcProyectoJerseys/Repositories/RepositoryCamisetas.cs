@@ -1,4 +1,6 @@
-﻿using MvcProyectoJerseys.Data;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore;
+using MvcProyectoJerseys.Data;
 using MvcProyectoJerseys.Models;
 using System.Runtime.CompilerServices;
 
@@ -59,12 +61,12 @@ namespace MvcProyectoJerseys.Repositories
             }
             return camisetas;
         }
-        public Camiseta GetCamiseta(int idCamiseta)
+        public async Task<Camiseta> GetCamiseta(int idCamiseta)
         {
             var consulta = from datos in this.context.Camisetas
                            where datos.IdCamiseta == idCamiseta
                            select datos;
-            return consulta.FirstOrDefault();
+            return await consulta.FirstOrDefaultAsync();
         }
 
         public void SubirCamiseta(Camiseta camiseta)
@@ -85,8 +87,23 @@ namespace MvcProyectoJerseys.Repositories
             this.context.SaveChanges();
 
         }
+        public async Task<List<Comentario>> GetComentariosAsync(int idCamiseta)
+        {
+            var consulta = from datos in this.context.Comentarios
+                           where datos.CamisetaId==idCamiseta
+                           select datos;
+            return await consulta.ToListAsync();
+        }
+        public async Task<CamisetaComentarios> DetalleCamiseta(int idCamiseta)
+        {
 
-        
+            Camiseta camiseta = await this.GetCamiseta(idCamiseta);
+            List<Comentario>comentarios=await this.GetComentariosAsync(idCamiseta);
+            CamisetaComentarios camisetaComentarios = new CamisetaComentarios();
+            camisetaComentarios.Camiseta=camiseta;
+            camisetaComentarios.Comentarios=comentarios;
+            return camisetaComentarios;
+        }
 
     }
 }

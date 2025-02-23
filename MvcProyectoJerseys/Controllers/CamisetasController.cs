@@ -28,14 +28,14 @@ namespace MvcProyectoJerseys.Controllers
             ViewData["CAMISETAS"] = camisetas;
             return View(usuario);
         }
-        public IActionResult DetalleCamiseta(int idCamiseta)
+        public async Task<IActionResult> DetalleCamiseta(int idCamiseta)
         {
-            Camiseta camiseta = this.repo.GetCamiseta(idCamiseta);
+            Camiseta camiseta =await  this.repo.GetCamiseta(idCamiseta);
             return View(camiseta);
         }
-        public IActionResult UpdateCamiseta(int idCamiseta, string equipo, string pais, int year, string marca, string equipacion, string descripcion, int posicion, string condicion, int dorsal, string jugador, int esActiva, string imagen)
+        public async Task<IActionResult> UpdateCamiseta(int idCamiseta, string equipo, string pais, int year, string marca, string equipacion, string descripcion, int posicion, string condicion, int dorsal, string jugador, int esActiva, string imagen)
         {
-            Camiseta camiseta = this.repo.GetCamiseta(idCamiseta);
+            Camiseta camiseta = await this.repo.GetCamiseta(idCamiseta);
             camiseta.Equipo = equipo;
             camiseta.Pais = pais;
             camiseta.Year = year;
@@ -70,6 +70,13 @@ namespace MvcProyectoJerseys.Controllers
             }
             ViewData["IMAGENPERFIL"]=this.helper.MapUrlPath(fileName, Folders.Avatar);
             return View();
+        }
+
+        public async Task<IActionResult> DetallesCamiseta(int idCamiseta)
+        {
+            CamisetaComentarios camisetaComentarios = await this.repo.DetalleCamiseta(idCamiseta);
+            ViewData["CAMISETACOMENTARIOS"]=camisetaComentarios;
+            return View(camisetaComentarios);
         }
         
         

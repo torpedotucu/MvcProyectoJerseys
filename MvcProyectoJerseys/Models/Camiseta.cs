@@ -50,5 +50,7 @@ namespace MvcProyectoJerseys.Models
         public string? Descripcion { get; set; }
         [Column("ImagenCamiseta")]
         public string? Imagen { get; set; }
+
+        public List<Comentario> Comentarios { get; set; }
     }
 }
