@@ -1,37 +1,62 @@
 ﻿@model CamisetaComentarios
 
-<h1>Camiseta COmentarios</h1>
-<ul>
-    <li>
-        @Model.Camiseta.IdCamiseta
-    </li>
-    <li>
-        @Model.Camiseta.IdUsuario
-    </li>
-    <li>
-        @Model.Camiseta.Equipo
-    </li>
-    <li>
-        @Model.Camiseta.Pais
-    </li>
-    <li>
-        @Model.Camiseta.Marca
-    </li>
-    <li>
-        @Model.Camiseta.Year
-    </li>
-    <li>
-        @Model.Camiseta.Condicion
-    </li>
-    @foreach(Comentario c in Model.Comentarios){
-        <li>
-            @c.UsuarioId
-        </li>
-        <li>
-            @c.ComentarioTxt
-        </li>
-        <li>
-            @c.FechaComentario
-        </li>
-    }
-</ul>
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Publicación de Camiseta</h5>
+            <button class="btn btn-outline-primary">❤️ 12</button>
+        </div>
+        <div class="row g-0">
+            <div class="col-md-4">
+                <img src="camiseta.jpg" class="img-fluid rounded-start" alt="Camiseta de fútbol">
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <h5 class="card-title">@Model.Camiseta.Equipo @Model.Camiseta.Year</h5>
+                    <p class="card-text"><strong>Equipo:</strong> @Model.Camiseta.Equipo</p>
+                    <p class="card-text"><strong>Pais:</strong>@Model.Camiseta.Pais</p>
+                    <p class="card-text">
+                        <strong>Marca:</strong> @Model.Camiseta.Marca
+                    </p>
+                    <p class="card-text">
+                        <strong>Equipacion:</strong> @Model.Camiseta.Equipacion
+                    </p>
+                    <p class="card-text">
+                        <strong>Condicion:</strong> @Model.Camiseta.Condicion
+                    </p>
+                    @if(Model.Camiseta.Dorsal!=null){
+                        <p class="card-text">
+                            <strong>Dorsal:</strong> @Model.Camiseta.Dorsal
+                        </p>
+                    }
+                    @if(Model.Camiseta.Jugador!=null){
+                        <p class="card-text">
+                            <strong>Jugador:</strong> @Model.Camiseta.Jugador
+                        </p>
+                    }
+                    <p class="card-text">
+                        <strong>Fecha:</strong> @Model.Camiseta.FechaSubida.ToShortDateString()
+                    </p>
+                    <p class="card-text"><span class="badge bg-success">Firmada</span> <span class="badge bg-warning">Usada en partido</span></p>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer">
+            <h6>Comentarios</h6>
+            <div class="list-group">
+                @foreach(Comentario comentario in Model.Comentarios){
+                    <div class="list-group-item d-flex align-items-start">
+                        <img src="avatar1.jpg" class="rounded-circle me-2" width="40" height="40" alt="Usuario">
+                        <div>
+                            <h6 class="mb-0">@comentario.UsuarioId</h6>
+                            <p class="mb-0">@comentario.ComentarioTxt</p>
+                        </div>
+                    </div>
+                }
+            </div>
+            <div class="mt-3">
+                <input type="text" class="form-control" placeholder="Añadir un comentario...">
+            </div>
+        </div>
+    </div>
+</div>
