@@ -105,5 +105,10 @@ namespace MvcProyectoJerseys.Repositories
             return camisetaComentarios;
         }
 
+        public async Task Comentar(Comentario comentario)
+        {
+            this.context.Comentarios.Add(comentario);
+        }
+
     }
 }
