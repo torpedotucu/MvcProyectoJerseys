@@ -17,6 +17,6 @@ namespace MvcProyectoJerseys.Models
         public string ComentarioTxt { get; set; }
         [Column("fechaComentario")]
         public DateTime FechaComentario { get; set; }
-        public Camiseta Camiseta { get; set; }
+        //public Camiseta Camiseta { get; set; }
     }
 }

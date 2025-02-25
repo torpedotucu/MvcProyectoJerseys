@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/MvcProyectoJerseys.styles.css" asp-append-version="true" />
+    @RenderSection("Styles",required:false)
 </head>
 <body>
     <header>
@@ -30,8 +31,8 @@
                 </ul>
 
                 <div class="col-md-3 text-end">
-                    <button type="button" class="btn btn-outline-primary me-2">Login</button>
-                    <button type="button" class="btn btn-primary">Sign-up</button>
+                    <a asp-controller="Usuarios" asp-action="CreateUsuario" class="btn btn-outline-primary me-2">SignUp</a>
+                    <button type="button" class="btn btn-primary">LogIn</button>
                 </div>
             </header>
         </div>

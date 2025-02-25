@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using MvcProyectoJerseys.Extensions;
 using MvcProyectoJerseys.Helpers;
 using MvcProyectoJerseys.Models;
 using MvcProyectoJerseys.Repositories;
@@ -32,6 +33,21 @@ namespace MvcProyectoJerseys.Controllers
         {
             Camiseta camiseta =await  this.repo.GetCamiseta(idCamiseta);
             return View(camiseta);
+        }
+        [HttpPost]
+        public async Task<IActionResult>DetallesCamiseta(int idCamiseta, string texto)
+        {
+            CamisetaComentarios camisetaComentarios = await this.repo.DetalleCamiseta(idCamiseta);
+            Comentario comentario = new Comentario();
+            comentario.UsuarioId=2;
+                //HttpContext.Session.GetObject<int>("IDUSUARIO");
+            comentario.CamisetaId=idCamiseta;
+            comentario.IdComentario=await this.repo.GetMaxIdComment();
+            comentario.ComentarioTxt=texto;
+            comentario.FechaComentario=DateTime.Now;
+            await this.repo.Comentar(comentario);
+            //return View(camiseta);
+            return RedirectToAction("DetallesCamiseta", new {idCamiseta});
         }
         public async Task<IActionResult> UpdateCamiseta(int idCamiseta, string equipo, string pais, int year, string marca, string equipacion, string descripcion, int posicion, string condicion, int dorsal, string jugador, int esActiva, string imagen)
         {
@@ -78,6 +94,8 @@ namespace MvcProyectoJerseys.Controllers
             ViewData["CAMISETACOMENTARIOS"]=camisetaComentarios;
             return View(camisetaComentarios);
         }
+
+        
         
         
     }

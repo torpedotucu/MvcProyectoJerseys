@@ -7,8 +7,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession();
 builder.Services.AddHttpContextAccessor();
 string connectionString = builder.Configuration.GetConnectionString("SqlCamisetas");
+
 builder.Services.AddTransient<RepositoryCamisetas>();
 builder.Services.AddDbContext<CamisetasContext>(options => options.UseSqlServer(connectionString));
 builder.Services.AddSingleton<HelperPathProvider>();
@@ -31,7 +34,7 @@ app.UseRouting();
 app.UseAuthorization();
 
 app.MapStaticAssets();
-
+app.UseSession();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}")

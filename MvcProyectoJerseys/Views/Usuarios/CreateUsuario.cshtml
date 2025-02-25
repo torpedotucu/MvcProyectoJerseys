@@ -1,0 +1,59 @@
+﻿@{
+    ViewData["Title"] = "Registro de Usuario";
+}
+@{
+    List<Pais> paises = ViewData["PAISES"] as List<Pais>;
+}
+@section Styles {
+    <link rel="stylesheet" href="~/css/CreateUsuario.css" />
+}
+
+
+<h2>Registro de Usuario</h2>
+
+<form method="post" enctype="multipart/form-data">
+    <div class="mb-3">
+        <label for="username" class="form-label">Username</label>
+        <input type="text" class="form-control" id="username" name="username" required>
+    </div>
+
+    <div class="mb-3">
+        <label for="alias" class="form-label">Alias</label>
+        <input type="text" class="form-control" id="alias" name="alias" required>
+    </div>
+
+    <div class="mb-3">
+        <label for="correo" class="form-label">Correo</label>
+        <input type="email" class="form-control" id="correo" name="correo" required>
+    </div>
+
+    <div class="mb-3">
+        <label for="contraseña" class="form-label">Contraseña</label>
+        <input type="password" class="form-control" id="contraseña" name="contraseña" required>
+    </div>
+
+    <div class="mb-3">
+        <label for="avatar" class="form-label">Avatar</label>
+        <input type="file" class="form-control" id="avatar" name="avatar" accept="image/*">
+    </div>
+
+    <div class="mb-3">
+        <label for="equipo" class="form-label">Equipo</label>
+        <input type="text" class="form-control" id="equipo" name="equipo" required>
+    </div>
+
+    <div class="mb-3">
+        <label for="pais" class="form-label">País</label>
+        <select class="form-control" id="pais" name="paisId" required>
+            <option value="">Seleccione un país</option>
+            @foreach (var pais in paises)
+            {
+                <option value="@pais.CodigoPais">@pais.NombrePais</option>
+            }
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Registrar</button>
+</form>
+
+

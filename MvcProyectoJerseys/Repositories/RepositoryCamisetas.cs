@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using MvcProyectoJerseys.Data;
 using MvcProyectoJerseys.Models;
@@ -107,8 +108,52 @@ namespace MvcProyectoJerseys.Repositories
 
         public async Task Comentar(Comentario comentario)
         {
-            this.context.Comentarios.Add(comentario);
+            comentario.IdComentario=0;
+            await this.context.Comentarios.AddAsync(comentario);
+            await this.context.SaveChangesAsync();
         }
 
+
+        public async Task<int> GetMaxIdCamiseta()
+        {
+            if (this.context.Camisetas.Count()==0)
+            {
+                return 1;
+            }
+            else
+            {
+                return await this.context.Camisetas.MaxAsync(x => x.IdCamiseta)+1;
+            }
+        }
+        public async Task<int> GetMaxIdUsuario()
+        {
+            if (this.context.Usuarios.Count()==0)
+            {
+                return 1;
+            }
+            else
+            {
+                return await this.context.Usuarios.MaxAsync(x => x.IdUsuario)+1;
+            }
+        }
+
+        public async Task<int> GetMaxIdComment()
+        {
+            if (this.context.Comentarios.Count()==0)
+            {
+                return 1;
+            }
+            else
+            {
+                return await this.context.Comentarios.MaxAsync(x => x.IdComentario)+1;
+            }
+        }
+
+        public async Task<List<Pais>> GetPaisesAsync()
+        {
+            var consulta = from datos in this.context.Paises
+                           select datos;
+            return await consulta.ToListAsync();
+        }
     }
 }
