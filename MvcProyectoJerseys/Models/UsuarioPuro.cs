@@ -3,35 +3,38 @@ using System.ComponentModel.DataAnnotations;
 
 namespace MvcProyectoJerseys.Models
 {
-    [Table("usuario")]
+    [Table("USUARIOS")]
     public class UsuarioPuro
     {
         [Key]
-        [Column("IdUsuario")]
+        [Column("IDUSUARIO")]
         public int IdUsuario { get; set; }
 
-        [Column("UserName")]
+        [Column("USERNAME")]
         public string UserName { get; set; }
 
-        [Column("AliasName")]
+        [Column("ALIAS")]
         public string AliasName { get; set; }
 
-        [Column("correo")]
+        [Column("EMAIL")]
         public string Correo { get; set; }
 
-        [Column("Contrasena")]
-        public string Contrasena { get; set; }
+        [Column("SALT")]
+        public string Salt { get; set; }
 
-        [Column("Avatar")]
+        [Column("PASS")]
+        public byte[] Contrasena { get; set; }
+
+        [Column("AVATAR")]
         public string Avatar { get; set; }
 
-        [Column("Equipo")]
+        [Column("EQUIPO")]
         public string Equipo { get; set; }
 
-        [Column("Pais")]
+        [Column("PAIS")]
         public string Pais { get; set; }
 
-        [Column("fechaUnion")]
+        [Column("FECHA_UNION")]
         public DateTime FechaUnion { get; set; }
     }
 }

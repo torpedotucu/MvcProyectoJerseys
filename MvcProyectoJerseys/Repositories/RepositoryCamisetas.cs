@@ -1,21 +1,26 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using MvcProyectoJerseys.Data;
+using MvcProyectoJerseys.Helpers;
 using MvcProyectoJerseys.Models;
 using System.Runtime.CompilerServices;
 
 namespace MvcProyectoJerseys.Repositories
 {
+
     public class RepositoryCamisetas
     {
         private CamisetasContext context;
         private IWebHostEnvironment hostEnvironment;
+        private HelperPathProvider helperPathProvider;
 
-        public RepositoryCamisetas(CamisetasContext context, IWebHostEnvironment hostEnvironment = null)
+        public RepositoryCamisetas(CamisetasContext context, IWebHostEnvironment hostEnvironment,HelperPathProvider helper) 
         {
             this.context=context;
             this.hostEnvironment=hostEnvironment;
+            this.helperPathProvider=helper;
         }
         public Usuario? LoginUsuario(string username, string contrasena)
         {
@@ -24,7 +29,6 @@ namespace MvcProyectoJerseys.Repositories
         }
         public Usuario GetUsuario(int idUsuario)
         {
-            Console.WriteLine("d");
             var consulta = from datos in this.context.Usuarios
                            where datos.IdUsuario == idUsuario
                            select datos;
@@ -82,10 +86,22 @@ namespace MvcProyectoJerseys.Repositories
             this.context.SaveChanges();
         }
 
-        public void EditarPerfil(Usuario usuario)
+        public async Task EditarPerfil(UsuarioPuro u)
         {
-            this.context.Usuarios.Update(usuario);
-            this.context.SaveChanges();
+            UsuarioPuro user = await this.context.UsuariosPuros.FirstOrDefaultAsync(c => c.IdUsuario == u.IdUsuario);
+            if (user!=null)
+            {
+                user.IdUsuario = u.IdUsuario;
+                user.UserName = u.UserName;
+                user.Pais = u.Pais;
+                user.AliasName = u.AliasName;
+                user.Avatar = u.Avatar;
+                user.Correo=u.Correo;
+                user.Contrasena = u.Contrasena;
+                user.Equipo = u.Equipo;
+                await this.context.SaveChangesAsync();
+            }
+           
 
         }
         public async Task<List<Comentario>> GetComentariosAsync(int idCamiseta)
@@ -125,6 +141,7 @@ namespace MvcProyectoJerseys.Repositories
                 return await this.context.Camisetas.MaxAsync(x => x.IdCamiseta)+1;
             }
         }
+
         public async Task<int> GetMaxIdUsuario()
         {
             if (this.context.Usuarios.Count()==0)
@@ -154,6 +171,24 @@ namespace MvcProyectoJerseys.Repositories
             var consulta = from datos in this.context.Paises
                            select datos;
             return await consulta.ToListAsync();
+        }
+
+        public async Task SubirFichero(IFormFile file,Folders folders)
+        {
+            string rootFolder = this.hostEnvironment.WebRootPath;
+            string fileName = file.FileName;
+            string path = this.helperPathProvider.MapPath(fileName, folders);
+
+            using(Stream stream=new FileStream(path, FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
+            }
+        }
+
+        public async Task CreateUsuario(UsuarioPuro usuario)
+        {
+            await this.context.UsuariosPuros.AddAsync(usuario);
+            await this.context.SaveChangesAsync();
         }
     }
 }

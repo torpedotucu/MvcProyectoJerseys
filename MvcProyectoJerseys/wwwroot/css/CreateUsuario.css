@@ -1,26 +1,2 @@
-﻿.card {
-    border-radius: 15px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
+﻿
 
-.card-header {
-    background-color: #28a745;
-    color: white;
-    border-radius: 15px 15px 0 0;
-}
-
-.card-body {
-    background-color: #ffffff;
-}
-
-.btn {
-    background-color: #28a745;
-    color: white;
-    border-radius: 5px;
-    padding: 10px 20px;
-    width: 100%;
-}
-
-    .btn:hover {
-        background-color: #218838;
-    }
