@@ -95,7 +95,41 @@ namespace MvcProyectoJerseys.Controllers
             return View(camisetaComentarios);
         }
 
-        
+        public async  Task<IActionResult> SubirCamisetas()
+        {
+            List<Pais> paises = await this.repo.GetPaisesAsync();
+            ViewData["PAISES"]=paises;
+            return View();
+        }
+
+        [ValidateAntiForgeryToken]
+        [HttpPost]
+        public async Task<IActionResult> SubirCamisetas(string equipo, string pais, int year, string marca, string equipacion, int posicion, string condicion, int?dorsal, string?jugador,string? descripcion, IFormFile imagenCamiseta, IFormFile?[]fotosSecundarias  )
+        {
+            //IDCAMISETA, ESACTIVA, FECHA SUBIDA, IDUSUARIO,
+            Camiseta cam = new Camiseta()
+            {
+                IdCamiseta=await this.repo.GetMaxIdCamiseta(),
+                Equipo=equipo,
+                Pais=pais,
+                Year=year,
+                Marca=marca,
+                Equipacion=equipacion,
+                Posicion=posicion,
+                Condicion=condicion,
+                Dorsal=dorsal,
+                Jugador=jugador,
+                EsActiva=1,
+                IdUsuario=HttpContext.Session.GetObject<UsuarioPuro>("USUARIO").IdUsuario,
+                Descripcion=descripcion,
+                Imagen=imagenCamiseta.FileName,
+                FechaSubida=DateTime.Now
+            };
+            await this.repo.SubirCamiseta(cam);
+            await this.repo.SubirFichero(imagenCamiseta, Folders.Jerseys);
+
+            return View();
+        }
         
         
     }

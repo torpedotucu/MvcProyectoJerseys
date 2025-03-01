@@ -12,48 +12,42 @@
                 <div class="card border border-light-subtle rounded-4">
                     <div class="card-body p-3 p-md-4 p-xl-5">
                         <form asp-action="Registrar" method="post" enctype="multipart/form-data">
+                            @Html.AntiForgeryToken()
                             <div class="row gy-3 overflow-hidden">
-
                                 <div class="col-12">
                                     <div class="form-floating mb-3">
                                         <input name="username" class="form-control" placeholder="Username" required />
                                         <label for="username" class="form-label">Username</label>
                                     </div>
                                 </div>
-
                                 <div class="col-12">
                                     <div class="form-floating mb-3">
                                         <input name="alias" class="form-control" placeholder="Alias" required />
                                         <label for="alias" class="form-label">Alias</label>
                                     </div>
                                 </div>
-
                                 <div class="col-12">
                                     <div class="form-floating mb-3">
                                         <input name="correo" type="email" class="form-control" placeholder="name@example.com" required />
                                         <label for="correo" class="form-label">Correo</label>
                                     </div>
                                 </div>
-
                                 <div class="col-12">
                                     <div class="form-floating mb-3">
                                         <input name="contrasena" type="password" class="form-control" placeholder="Password" required />
                                         <label for="contrasena" class="form-label">Contraseña</label>
                                     </div>
                                 </div>
-
                                 <div class="col-12">
                                     <input for="avatar" type="file" class="form-control" accept="image/*" required />
                                     <label name="avatar" class="form-label">Avatar</label>
                                 </div>
-
                                 <div class="col-12">
                                     <div class="form-floating mb-3">
                                         <input name="equipo" class="form-control" placeholder="Equipo" required />
                                         <label for="equipo" class="form-label">Equipo Favorito</label>
                                     </div>
                                 </div>
-
                                 <div class="col-12">
                                     <label name="pais" class="form-label">País</label>
                                     <select for="pais" class="form-select" required>
@@ -63,7 +57,6 @@
                                         }
                                     </select>
                                 </div>
-
                                 <div class="col-12">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" id="terms" required />
@@ -72,7 +65,6 @@
                                         </label>
                                     </div>
                                 </div>
-
                                 <div class="col-12">
                                     <div class="d-grid">
                                         <button class="btn btn-primary btn-lg" type="submit">Registrarse</button>

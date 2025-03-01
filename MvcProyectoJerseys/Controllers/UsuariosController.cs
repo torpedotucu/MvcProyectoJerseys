@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using MvcProyectoJerseys.Extensions;
 using MvcProyectoJerseys.Helpers;
 using MvcProyectoJerseys.Models;
 using MvcProyectoJerseys.Repositories;
@@ -23,6 +24,7 @@ namespace MvcProyectoJerseys.Controllers
             ViewData["PAISES"]=paises;
             return View();
         }
+        [ValidateAntiForgeryToken]
         [HttpPost]
         public async Task<IActionResult> CreateUsuario(string nombre, string alias, IFormFile avatar,string correo, string contrasena, string equipo, string pais)
         {
@@ -39,9 +41,34 @@ namespace MvcProyectoJerseys.Controllers
             user.Pais=pais;
             user.Avatar=avatar.FileName;
             user.FechaUnion=DateTime.Now;
-            await this.repo.SubirFichero(avatar, Folders.Avatar);
             await this.repo.CreateUsuario(user);
+            await this.repo.SubirFichero(avatar, Folders.Avatar);
             return View();
+        }
+
+
+        public IActionResult Login()
+        {
+            HttpContext.Session.Remove("USUARIO");
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Login(string correo, string password)
+        {
+            UsuarioPuro user = await this.repo.LoginUsuario(correo, password);
+            if (user==null)
+            {
+                ViewBag.ERROR=true;
+                return View();
+            }
+            else
+            {
+                HttpContext.Session.SetObject("USUARIO", user);
+                ViewBag.INICIO=user.Equipo;
+                return RedirectToAction("PerfilUsuario");
+            }
         }
 
     }

@@ -22,10 +22,31 @@ namespace MvcProyectoJerseys.Repositories
             this.hostEnvironment=hostEnvironment;
             this.helperPathProvider=helper;
         }
-        public Usuario? LoginUsuario(string username, string contrasena)
+        public async Task<UsuarioPuro?> LoginUsuario(string email, string contrasena)
         {
-            return context.Usuarios
-                .FirstOrDefault(u => u.UserName == username && u.Contrasena == contrasena);
+            var consulta = from datos in this.context.UsuariosPuros
+                           where datos.Correo==email
+                           select datos;
+            UsuarioPuro user = await consulta.FirstOrDefaultAsync();
+            if (user==null)
+            {
+                return null;
+            }
+            else
+            {
+                string salt = user.Salt;
+                byte[] temp = HelperCryptography.EncryptPassword(contrasena, salt);
+                byte[] passBytes = user.Contrasena;
+                bool response = HelperCryptography.CompararArrays(temp, passBytes);
+                if (response==true)
+                {
+                    return user;
+                }
+                else
+                {
+                    return null;
+                }
+            }
         }
         public Usuario GetUsuario(int idUsuario)
         {
@@ -74,10 +95,11 @@ namespace MvcProyectoJerseys.Repositories
             return await consulta.FirstOrDefaultAsync();
         }
 
-        public void SubirCamiseta(Camiseta camiseta)
+        public async Task<int> SubirCamiseta(Camiseta camiseta)
         {
-            this.context.Camisetas.Add(camiseta);
-            this.context.SaveChanges();
+            await this.context.Camisetas.AddAsync(camiseta);
+            await this.context.SaveChangesAsync();
+            return camiseta.IdCamiseta;
         }
 
         public void ModificarCamiseta(Camiseta camiseta)
@@ -86,23 +108,26 @@ namespace MvcProyectoJerseys.Repositories
             this.context.SaveChanges();
         }
 
+
+        //REVISAR
         public async Task EditarPerfil(UsuarioPuro u)
         {
-            UsuarioPuro user = await this.context.UsuariosPuros.FirstOrDefaultAsync(c => c.IdUsuario == u.IdUsuario);
-            if (user!=null)
-            {
-                user.IdUsuario = u.IdUsuario;
-                user.UserName = u.UserName;
-                user.Pais = u.Pais;
-                user.AliasName = u.AliasName;
-                user.Avatar = u.Avatar;
-                user.Correo=u.Correo;
-                user.Contrasena = u.Contrasena;
-                user.Equipo = u.Equipo;
-                await this.context.SaveChangesAsync();
-            }
+            //UsuarioPuro user = await this.context.UsuariosPuros.FirstOrDefaultAsync(c => c.IdUsuario == u.IdUsuario);
+            //if (user!=null)
+            //{
+            //    user.IdUsuario = u.IdUsuario;
+            //    user.UserName = u.UserName;
+            //    user.Pais = u.Pais;
+            //    user.AliasName = u.AliasName;
+            //    user.Avatar = u.Avatar;
+            //    user.Correo=u.Correo;
+            //    user.Salt=u.Salt;
+            //    user.Contrasena = HelperCryptography.EncryptPassword(u.Contrasena,u.Salt);//REVISAR
+            //    user.Equipo = u.Equipo;
+            //    user.FechaUnion=u.FechaUnion;
+            //    await this.context.SaveChangesAsync();
+            //}
            
-
         }
         public async Task<List<Comentario>> GetComentariosAsync(int idCamiseta)
         {
