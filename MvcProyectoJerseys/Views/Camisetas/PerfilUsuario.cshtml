@@ -1,70 +1,20 @@
-﻿@model Usuario
+﻿@model UsuarioPuro
 @{
     List<Camiseta> camisetas = ViewData["CAMISETAS"] as List<Camiseta>;
 }
-@{
-    CamisetaComentarios c = ViewData["CAMISETACOMENTARIOS"] as CamisetaComentarios;
-}
-@* <h1>Perfil Usuario</h1> *@
-@* <h2>@Model.UserName</h2> *@
 
-@* Camisetas *@ 
-@* <div class="album py-5 bg-body-tertiary"> *@
-@*     <div class="container"> *@
-@*         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3"> *@
-@*             @foreach(Camiseta camiseta in camisetas){ *@
-@*                 <div class="col"> *@
-@*                     <div class="card shadow-sm border-warning"> *@
-@*                         <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c" /><text x="50%" y="50%" fill="#eceeef" dy=".3em">Thumbnail</text></svg> *@
-@*                         <div class="card-body"> *@
-@*                             @if (camiseta.Descripcion != null) *@
-@*                             { *@
-@*                                 <p class="card-text">@camiseta.Descripcion</p> *@
-@*                             } *@
-@*                             <div class="d-flex justify-content-between align-items-center"> *@
-@*                                 <div class="btn-group"> *@
-@*                                     <a class="btn btn-sm btn-outline-primary"  *@
-@*                                         asp-controller="Camisetas" asp-action="DetallesCamiseta" asp-route-idCamiseta="3" *@
-@*                                     >View</a> *@
-@*                                     <button type="button" class="btn btn-sm btn-outline-secondary">Archivar</button> *@
-@*                                 </div> *@
-@*                                 <small class="text-body-secondary">9 mins</small> *@
-@*                             </div> *@
-@*                         </div> *@
-@*                     </div> *@
-@*                 </div> *@
-@*             }    *@
-@*         </div> *@
-@*     </div> *@
-@* </div> *@
 
-@* @if(ViewData["CAMISETACOMENTARIOS"]!=null){ *@
-@*     <ul> *@
-@*         <li> *@
-@*             @c.Camiseta.Equipo *@
-@*         </li> *@
-@*         <li> *@
-@*             @c.Camiseta.IdUsuario *@
-@*         </li> *@
-@*         <li> *@
-@*             @c.Camiseta.Marca *@
-@*         </li> *@
-@*         @foreach(Comentario comentario in c.Comentarios){ *@
-
-@*             <li> *@
-@*                 @comentario *@
-@*             </li> *@
-@*         } *@        
-@*     </ul> *@
-@* } *@
 <div class="container mt-4">
     <!-- Perfil de Usuario -->
     <div class="card mb-4">
         <div class="card-body text-center">
-            <img src="avatar.jpg" class="rounded-circle mb-3" width="100" height="100" alt="Usuario">
-            <h5 class="card-title">Nombre del Usuario</h5>
-            <p class="card-text">correo@ejemplo.com</p>
-            <p class="card-text">Ubicación: Ciudad, País</p>
+            <img src="~/avatar/@Model.Avatar" class="rounded-circle mb-3" width="100" height="100" alt="Usuario">
+            <h5 class="card-title">@Model.UserName</h5>
+            <p class="card-text">
+                @Model.AliasName
+            </p>
+            <p class="card-text">@Model.Correo</p>
+            <p class="card-text">@Model.Equipo, @Model.Pais</p
             <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editProfileModal">Editar Perfil</button>
         </div>
     </div>
@@ -97,32 +47,36 @@
             </div>
         </div>
     </div>
-
-    <!-- Camisetas del Usuario -->
-    <div class="album py-5 bg-body-tertiary"> 
-    <div class="container"> 
-         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3"> 
-             @foreach(Camiseta camiseta in camisetas){ 
-                 <div class="col"> 
-                     <div class="card shadow-sm border-warning"> 
-                        <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c" /><text x="50%" y="50%" fill="#eceeef" dy=".3em">Thumbnail</text></svg> 
-                         <div class="card-body"> 
-                             @if (camiseta.Descripcion != null) 
-                             { 
-                                 <p class="card-text">@camiseta.Descripcion</p> 
-                             } 
-                             <div class="d-flex justify-content-between align-items-center"> 
-                                 <div class="btn-group"> 
-                                     <a class="btn btn-sm btn-outline-primary" asp-controller="Camisetas" asp-action="DetallesCamiseta" asp-route-idCamiseta="3">View</a> 
-                                     <button type="button" class="btn btn-sm btn-outline-secondary">Archivar</button>
+    @if(camisetas!=null){
+        <!-- Camisetas del Usuario -->
+        <div class="album py-5 bg-body-tertiary"> 
+        <div class="container"> 
+             <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3"> 
+                 @foreach(Camiseta camiseta in camisetas){ 
+                     <div class="col"> 
+                         <div class="card shadow-sm border-warning"> 
+                            <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><img src="~/jersey/@camiseta.Imagen" alt="Alternate Text" /></svg> 
+                             <div class="card-body"> 
+                                 @if (camiseta.Descripcion != null) 
+                                 { 
+                                     <p class="card-text">@camiseta.Descripcion</p> 
+                                 } 
+                                 <div class="d-flex justify-content-between align-items-center"> 
+                                     <div class="btn-group"> 
+                                         <a class="btn btn-sm btn-outline-primary" asp-controller="Camisetas" asp-action="DetallesCamiseta" asp-route-idCamiseta="@camiseta.IdCamiseta">View</a> 
+                                         <button type="button" class="btn btn-sm btn-outline-secondary">Archivar</button>
+                                     </div> 
+                                     <small class="text-body-secondary">9 mins</small> 
                                  </div> 
-                                 <small class="text-body-secondary">9 mins</small> 
                              </div> 
                          </div> 
                      </div> 
-                 </div> 
-             }    
+                 }    
+             </div> 
          </div> 
-     </div> 
- </div>
+     </div>
+   
+    }
 </div>
+
+    

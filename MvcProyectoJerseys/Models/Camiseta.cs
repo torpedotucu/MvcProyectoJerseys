@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace MvcProyectoJerseys.Models
 {
-    [Table("Camisetas")]
+    [Table("CAMISETA")]
     public class Camiseta
     {
         [Key]
@@ -26,7 +26,7 @@ namespace MvcProyectoJerseys.Models
         public string Equipacion { get; set; }
 
         [Column("Posicion")]
-        public int Posicion { get; set; }
+        public int? Posicion { get; set; }
 
         [Column("Condicion")]
         public string Condicion { get; set; }

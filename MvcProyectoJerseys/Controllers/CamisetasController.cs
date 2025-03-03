@@ -20,12 +20,14 @@ namespace MvcProyectoJerseys.Controllers
             return View();
         }
 
-        public IActionResult PerfilUsuario(int idUsuario)
-        {
-            Usuario usuario = this.repo.GetUsuario(idUsuario);
+        public async Task<IActionResult> PerfilUsuario()
+        {   
+            UsuarioPuro user=HttpContext.Session.GetObject<UsuarioPuro>("USUARIO");
+            
+            UsuarioPuro usuario = await this.repo.GetUsuario(user.IdUsuario);
             ViewData["USUARIO"] = usuario;
             Console.WriteLine(usuario.UserName);
-            List<Camiseta> camisetas = this.repo.GetCamisetasUsuario(idUsuario);
+            List<Camiseta> camisetas = this.repo.GetCamisetasUsuario(user.IdUsuario);
             ViewData["CAMISETAS"] = camisetas;
             return View(usuario);
         }
@@ -95,7 +97,7 @@ namespace MvcProyectoJerseys.Controllers
             return View(camisetaComentarios);
         }
 
-        public async  Task<IActionResult> SubirCamisetas()
+        public async  Task<IActionResult> CreateCamiseta()
         {
             List<Pais> paises = await this.repo.GetPaisesAsync();
             ViewData["PAISES"]=paises;
@@ -104,30 +106,31 @@ namespace MvcProyectoJerseys.Controllers
 
         [ValidateAntiForgeryToken]
         [HttpPost]
-        public async Task<IActionResult> SubirCamisetas(string equipo, string pais, int year, string marca, string equipacion, int posicion, string condicion, int?dorsal, string?jugador,string? descripcion, IFormFile imagenCamiseta, IFormFile?[]fotosSecundarias  )
+        public async Task<IActionResult> CreateCamiseta(string equipo, string pais, int year, string marca, string equipacion, string condicion, int?dorsal, string?jugador,string? descripcion, IFormFile imagenCamiseta, IFormFile?[]fotosSecundarias  )
         {
             //IDCAMISETA, ESACTIVA, FECHA SUBIDA, IDUSUARIO,
-            Camiseta cam = new Camiseta()
-            {
-                IdCamiseta=await this.repo.GetMaxIdCamiseta(),
-                Equipo=equipo,
-                Pais=pais,
-                Year=year,
-                Marca=marca,
-                Equipacion=equipacion,
-                Posicion=posicion,
-                Condicion=condicion,
-                Dorsal=dorsal,
-                Jugador=jugador,
-                EsActiva=1,
-                IdUsuario=HttpContext.Session.GetObject<UsuarioPuro>("USUARIO").IdUsuario,
-                Descripcion=descripcion,
-                Imagen=imagenCamiseta.FileName,
-                FechaSubida=DateTime.Now
-            };
+            Camiseta cam = new Camiseta();
+            cam.IdCamiseta=await this.repo.GetMaxIdCamiseta();
+            cam.Equipo=equipo;
+            cam.Pais=pais;
+            cam.Year=year;
+            cam.Marca=marca;
+            cam.Equipacion=equipacion;
+            //cam.Posicion=posicion;
+            cam.Condicion=condicion;
+            cam.Dorsal=dorsal;
+            cam.Jugador=jugador;
+            cam.EsActiva=1;
+            cam.IdUsuario=HttpContext.Session.GetObject<UsuarioPuro>("USUARIO").IdUsuario;
+            cam.Descripcion=descripcion;
+            cam.Imagen=imagenCamiseta.FileName;
+            cam.FechaSubida=DateTime.Now;
+            
             await this.repo.SubirCamiseta(cam);
             await this.repo.SubirFichero(imagenCamiseta, Folders.Jerseys);
 
+            List<Pais> paises = await this.repo.GetPaisesAsync();
+            ViewData["PAISES"]=paises;
             return View();
         }
         

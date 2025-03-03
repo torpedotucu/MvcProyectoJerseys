@@ -48,18 +48,18 @@ namespace MvcProyectoJerseys.Repositories
                 }
             }
         }
-        public Usuario GetUsuario(int idUsuario)
+        public async Task<UsuarioPuro> GetUsuario(int idUsuario)
         {
-            var consulta = from datos in this.context.Usuarios
+            var consulta = from datos in this.context.UsuariosPuros
                            where datos.IdUsuario == idUsuario
                            select datos;
-            return consulta.FirstOrDefault();
+             return await consulta.FirstOrDefaultAsync();
         }
 
         public List<Camiseta> GetCamisetasUsuario(int idUsuario)
         {
             var consulta = from datos in this.context.Camisetas
-                           where datos.IdUsuario== 2
+                           where datos.IdUsuario== idUsuario
                            select datos;
 
             List<Camiseta> camisetas = new List<Camiseta>();

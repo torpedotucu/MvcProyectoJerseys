@@ -1,27 +1,26 @@
 ﻿@{
-    List<Pais> paises = ViewData["Pais"] as List<Pais>;
+    List<Pais> paises = ViewData["PAISES"] as List<Pais>;
 }
 
-<section class="bg-light py-3 py-md-5 py-xl-8">
+<section class="contain">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5 col-xxl-4">
                 <div class="card border border-light-subtle rounded-4">
                     <div class="card-body p-3 p-md-4 p-xl-5">
                         <div class="text-center mb-3">
-                            <p>NUEVA CAMISETA</p>
+                            <img src="~/images/JerseyHub1.png" width="175" height="70" />
                         </div>
-                        <form asp-action="CreateCamiseta" method="post" enctype="multipart/form-data">
+                        <form id="camisetaForm" asp-action="CreateCamiseta" method="post" enctype="multipart/form-data">
                             @Html.AntiForgeryToken()
-                            <div class="row gy-3 overflow-hidden">
-                                <div class="col-12">
-                                    <div class="form-floating mb-3">
-                                        <input name="equipo" type="text" class="form-control" placeholder="Equipo" required />
-                                        <label for="equipo" class="form-label">Equipo</label>
-                                    </div>
+                            <div class="step" id="step1">
+                                <h2 class="mb-3">Paso 1: Información Básica</h2>
+                                <div class="mb-3">
+                                    <label class="form-label">Equipo</label>
+                                    <input name="equipo" type="text" class="form-control" required>
                                 </div>
-                                <div class="col-12">
-                                    <label for="pais" class="form-label">País</label>
+                                <div class="mb-3">
+                                    <label class="form-label">País</label>
                                     <select name="pais" class="form-select" required>
                                         @foreach (var pais in paises)
                                         {
@@ -29,64 +28,85 @@
                                         }
                                     </select>
                                 </div>
-                                <div class="col-12">
-                                    <div class="form-floating mb-3">
-                                        <input name="equipo" type="text" class="form-control" placeholder="Equipo" required />
-                                        <label for="equipo" class="form-label">Equipo</label>
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <div class="form-floating mb-3">
-                                        <input name="marca" type="text" class="form-control" placeholder="Marca" required />
-                                        <label for="marca" class="form-label">Marca</label>
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <div class="form-floating mb-3">
-                                        <input name="year" type="number" class="form-control" placeholder="1990" required />
-                                        <label for="year" class="form-label">Año</label>
-                                    </div>
-                                </div>
-                                @* Posicion input *@
-                                <div class="col-12">
-                                    <div class="form-floating mb-3">
-                                        <input name="condicion" type="text" class="form-control" placeholder="Condicion" required />
-                                        <label for="condicion" class="form-label">Condicion</label>
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <div class="form-floating mb-3">
-                                        <input name="dorsal" type="number" class="form-control" placeholder="Dorsal" />
-                                        <label for="dorsal" class="form-label">Dorsal</label>
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <input name="imagenCamiseta" type="file" class="form-control" accept="image/*" required />
-                                    <label for="imagenCamiseta" class="form-label">Imagen</label>
-                                </div>
-                                <div class="col-12">
-                                    <div class="form-floating mb-3">
-                                        <input name="jugador" type="text" class="form-control" placeholder="Jugador" />
-                                        <label for="jugador" class="form-label">Jugador</label>
-                                    </div>
-                                </div>
-                                
+                                <button type="button" class="btn btn-success" onclick="nextStep(2)">Siguiente</button>
+                            </div>
 
-                                <div class="col-12">
-                                    <div class="d-grid">
-                                        <button class="btn btn-primary btn-lg" type="submit">Subir Camiseta</button>
-                                    </div>
+                            <div class="step d-none" id="step2">
+                                <h2 class="mb-3">Paso 2: Detalles</h2>
+                                <div class="mb-3">
+                                    <label class="form-label">Año</label>
+                                    <input name="year" type="number" class="form-control" required>
                                 </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Marca</label>
+                                    <input name="marca" type="text" class="form-control" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Equipación</label>
+                                    <select class="form-select" name="equipacion" required>
+                                        <option value="Local">Local</option>
+                                        <option value="Visitante">Visitante</option>
+                                        <option value="Tercera">Tercera Equipación</option>
+                                        <option value="Entrenamiento">Entrenamiento</option>
+                                        <option value="Otros">Otros</option>
+                                    </select>
+                                </div>
+                                <button type="button" class="btn btn-outline-success" onclick="prevStep(1)">Atrás</button>
+                                <button type="button" class="btn btn-success" onclick="nextStep(3)">Siguiente</button>
+                            </div>
 
+                            <div class="step d-none" id="step3">
+                                <h2 class="mb-3"></h2>
+                                <div class="mb-3">
+                                    <label class="form-label">Condicion</label>
+                                    <input name="condicion" type="text" class="form-control" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Dorsal</label>
+                                    <input name="dorsal" type="number" class="form-control">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Jugador</label>
+                                    <input name="jugador" type="text" class="form-control" >
+                                </div>
+                                <button type="button" class="btn btn-outline-success" onclick="prevStep(2)">Atrás</button>
+                                <button type="button" class="btn btn-success" onclick="nextStep(4)">Siguiente</button>
+                            </div>
+                            <div class="step d-none" id="step4">
+                                <h2 class="mb-3">Paso 3: Imágenes y Descripción</h2>
+                                <div class="mb-3">
+                                    <label class="form-label">Imagen Principal</label>
+                                    <input name="imagenCamiseta" type="file" class="form-control" accept="image/*" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Descripción</label>
+                                    <textarea maxlength="255" class="form-control" name="descripcion"></textarea>
+                                </div>
+                                <button type="button" class="btn btn-outline-success" onclick="prevStep(3)">Atrás</button>
+                                <button type="submit" class="btn btn-success">Subir Camiseta</button>
                             </div>
                         </form>
                     </div>
-                </div>
-
-                <div class="d-flex gap-2 gap-md-4 flex-column flex-md-row justify-content-md-center mt-4">
-                    <p class="m-0 text-secondary text-center">¿Ya tienes cuenta? <a href="#!" class="link-primary text-decoration-none">Iniciar sesión</a></p>
                 </div>
             </div>
         </div>
     </div>
 </section>
+
+<script>
+    function showStep(step) {
+        document.querySelectorAll(".step").forEach(s => s.classList.add("d-none"));
+        document.getElementById("step" + step).classList.remove("d-none");
+    }
+
+    function nextStep(step) {
+        showStep(step);
+    }
+
+    function prevStep(step) {
+        showStep(step);
+    }
+
+    // Mostrar el primer paso al cargar la página
+    showStep(1);
+</script>

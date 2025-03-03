@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using MvcProyectoJerseys.Extensions;
 using MvcProyectoJerseys.Helpers;
 using MvcProyectoJerseys.Models;
@@ -67,7 +68,7 @@ namespace MvcProyectoJerseys.Controllers
             {
                 HttpContext.Session.SetObject("USUARIO", user);
                 ViewBag.INICIO=user.Equipo;
-                return RedirectToAction("PerfilUsuario");
+                return RedirectToAction("PerfilUsuario","Camisetas");
             }
         }
 
