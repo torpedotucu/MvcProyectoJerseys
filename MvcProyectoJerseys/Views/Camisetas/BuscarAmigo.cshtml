@@ -1,0 +1,27 @@
+﻿@model UsuarioPuro
+<h2>Buscar usuario</h2>
+<form method="post" asp-action="BuscarAmigo">
+    @Html.AntiForgeryToken()
+    <div class="form-group">
+        <label>Nombre de Usuario</label>
+        <input type="text" class="form-control" id="searchTerm" name="codigoAmigo" />
+    </div>
+    <button class="btn btn-primary">Buscar</button>
+</form>
+@if (Model != null)
+{
+    <div class="card mt-3">
+        <div class="card-body">
+            <h5 class="card-title">@Model.UserName</h5>
+            <p class="card-text">@Model.Correo</p>
+            <input type="hidden" name="userId" value="@Model.IdUsuario" />
+            <a asp-action="AgregarAmigo" asp-route-idAmigo="@Model.IdUsuario" class="btn btn-success">Agregar Amigo</a>
+        </div>
+    </div>
+}
+@if (TempData["ERROR"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ERROR"]
+    </div>
+}

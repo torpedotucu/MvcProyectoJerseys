@@ -15,6 +15,8 @@ namespace MvcProyectoJerseys.Data
         public DbSet<UsuarioPuro> UsuariosPuros { get; set;}
         public DbSet<Pais> Paises { get; set; }
 
+        public DbSet<Amistad> Amistades { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //modelBuilder.Entity<Comentario>().HasOne(c => c.Camiseta)
@@ -22,5 +24,7 @@ namespace MvcProyectoJerseys.Data
             //    .HasForeignKey(c => c.CamisetaId);
             
         }
+
+
     }
 }

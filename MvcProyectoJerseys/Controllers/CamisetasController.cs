@@ -71,11 +71,11 @@ namespace MvcProyectoJerseys.Controllers
             return RedirectToAction("PerfilUsuario", new { idUsuario = camiseta.IdUsuario });
         }
         
-
         public IActionResult SubirImagenPerfil()
         {
             return View();
         }
+
         [HttpPost]
         public async Task<IActionResult> SubirImagenPerfil(IFormFile file)
         {
@@ -133,7 +133,52 @@ namespace MvcProyectoJerseys.Controllers
             ViewData["PAISES"]=paises;
             return View();
         }
-        
-        
+
+        public async Task<IActionResult>AgregarAmigo(int idAmigo)
+        {
+            //Comprobar que no son amigos
+            //if
+            //si esta bien agregar
+            int idUser= HttpContext.Session.GetObject<UsuarioPuro>("USUARIO").IdUsuario;
+            if (await this.repo.AreAlreadyFriends(idUser, idAmigo))
+            {
+                TempData["ERROR"]="YA SOIS AMIGOS";
+                return View();
+            }
+            else
+            {
+                await this.repo.SetAmistad(idUser, idAmigo);
+                return RedirectToAction("PerfilUsuario");
+            }
+        }
+        public IActionResult BuscarAmigo()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult>BuscarAmigo(string codigoAmigo)
+        {
+            var usuarioActualId = HttpContext.Session.GetObject<UsuarioPuro>("USUARIO").IdUsuario;
+            var amigo = await this.repo.FindUsuarioAmistadCode(codigoAmigo);
+
+            if (amigo.IdUsuario==usuarioActualId)
+            {
+                TempData["ERROR"]="No puedes agregarte a ti mismo.";
+                return View();
+            }
+            else if(amigo==null)
+            {
+                TempData["ERROR"]="No se han encontrado resultados";
+                return View();
+            }
+            else
+            {
+                return View(amigo);
+            }
+
+        }
+
+
     }
 }

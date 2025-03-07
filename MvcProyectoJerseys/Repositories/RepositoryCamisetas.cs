@@ -169,13 +169,14 @@ namespace MvcProyectoJerseys.Repositories
 
         public async Task<int> GetMaxIdUsuario()
         {
-            if (this.context.Usuarios.Count()==0)
+            if (this.context.UsuariosPuros.Count()==0)
             {
                 return 1;
             }
             else
             {
-                return await this.context.Usuarios.MaxAsync(x => x.IdUsuario)+1;
+                int id= await this.context.UsuariosPuros.MaxAsync(x => x.IdUsuario)+1;
+                return id;
             }
         }
 
@@ -197,6 +198,17 @@ namespace MvcProyectoJerseys.Repositories
                            select datos;
             return await consulta.ToListAsync();
         }
+        public async Task<int> GetMaxIdAmistad()
+        {
+            if (this.context.Amistades.Count()==0)
+            {
+                return 1;
+            }
+            else
+            {
+                return await this.context.Amistades.MaxAsync(x => x.IdAmistad)+1;
+            }
+        }
 
         public async Task SubirFichero(IFormFile file,Folders folders)
         {
@@ -212,7 +224,41 @@ namespace MvcProyectoJerseys.Repositories
 
         public async Task CreateUsuario(UsuarioPuro usuario)
         {
+            //usuario.CodeAmistad=GenerateCodeAmistadUsuario();
             await this.context.UsuariosPuros.AddAsync(usuario);
+            await this.context.SaveChangesAsync();
+        }
+
+        public  string GenerateCodeAmistadUsuario()
+        {
+            return Guid.NewGuid().ToString().Substring(0, 9).ToUpper();
+
+        }
+
+        public async Task<UsuarioPuro>FindUsuarioAmistadCode(string friendCode)
+        {
+            var consulta = await this.context.UsuariosPuros.Where(x => x.CodeAmistad==friendCode).FirstOrDefaultAsync();
+            return consulta;
+        }
+        
+        public async Task<bool>AreAlreadyFriends(int usuarioA, int UsuarioB)
+        {
+            return await this.context.Amistades.AnyAsync
+                (a => (a.UsuarioId==usuarioA && a.AmigoId==UsuarioB) ||
+                (a.UsuarioId==UsuarioB && a.AmigoId==usuarioA)
+            );
+        }
+
+        public async Task SetAmistad(int userAId, int userBId)
+        {
+            var newAmistad = new Amistad
+            {
+                IdAmistad=await GetMaxIdAmistad(),
+                UsuarioId=userAId,
+                AmigoId=userBId,
+                FechaAmistad=DateTime.UtcNow.Date
+            };
+            await this.context.Amistades.AddAsync(newAmistad);
             await this.context.SaveChangesAsync();
         }
     }

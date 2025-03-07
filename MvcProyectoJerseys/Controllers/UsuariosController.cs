@@ -39,6 +39,7 @@ namespace MvcProyectoJerseys.Controllers
             user.Salt=HelperCryptography.GenerateSalt();
             user.Contrasena=HelperCryptography.EncryptPassword(contrasena, user.Salt);
             user.Equipo=equipo;
+            user.CodeAmistad=this.repo.GenerateCodeAmistadUsuario();
             user.Pais=pais;
             user.Avatar=avatar.FileName;
             user.FechaUnion=DateTime.Now;

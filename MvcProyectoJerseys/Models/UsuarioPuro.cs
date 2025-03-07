@@ -34,6 +34,9 @@ namespace MvcProyectoJerseys.Models
         [Column("PAIS")]
         public string Pais { get; set; }
 
+        [Column("CODEAMISTAD")]
+        public string CodeAmistad { get; set; }
+
         [Column("FECHA_UNION")]
         public DateTime FechaUnion { get; set; }
     }
