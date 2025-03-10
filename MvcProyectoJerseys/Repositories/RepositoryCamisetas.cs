@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using MvcProyectoJerseys.Data;
 using MvcProyectoJerseys.Helpers;
@@ -260,6 +261,23 @@ namespace MvcProyectoJerseys.Repositories
             };
             await this.context.Amistades.AddAsync(newAmistad);
             await this.context.SaveChangesAsync();
+        }
+
+        public async Task<int>GetNumberAmigosAsync(int idUsuario)
+        {
+            var consulta = await this.context.Amistades
+                .Where(a => a.UsuarioId==idUsuario || a.AmigoId==idUsuario)
+                .CountAsync();
+            return consulta;
+        }
+        
+        public async Task<List<VUsuarioFree>>GetListaAmigosAsync(int idUsuario)
+        {
+            var sql = "SP_OBTENER_AMIGOS_USUARIO @idusuario";
+            SqlParameter paramIdUsuario = new SqlParameter("@idusuario", idUsuario);
+            var consulta = this.context.VUsuarioFrees.FromSqlRaw(sql, paramIdUsuario);
+            List<VUsuarioFree> amigos = await consulta.ToListAsync();
+            return amigos;
         }
     }
 }

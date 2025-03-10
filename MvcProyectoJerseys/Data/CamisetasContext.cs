@@ -10,7 +10,7 @@ namespace MvcProyectoJerseys.Data
 
         }
         public DbSet<Camiseta> Camisetas { get; set; }
-        public DbSet<Usuario> Usuarios { get; set; }
+        public DbSet<VUsuarioFree> VUsuarioFrees { get; set; }
         public DbSet<Comentario> Comentarios { get; set; }
         public DbSet<UsuarioPuro> UsuariosPuros { get; set;}
         public DbSet<Pais> Paises { get; set; }

@@ -26,6 +26,8 @@ namespace MvcProyectoJerseys.Controllers
             
             UsuarioPuro usuario = await this.repo.GetUsuario(user.IdUsuario);
             ViewData["USUARIO"] = usuario;
+            ViewData["NUMAMIGOS"]=await this.repo.GetNumberAmigosAsync(usuario.IdUsuario);
+            ViewData["LISTAAMIGOS"]=await this.repo.GetListaAmigosAsync(usuario.IdUsuario);
             Console.WriteLine(usuario.UserName);
             List<Camiseta> camisetas = this.repo.GetCamisetasUsuario(user.IdUsuario);
             ViewData["CAMISETAS"] = camisetas;
@@ -41,8 +43,7 @@ namespace MvcProyectoJerseys.Controllers
         {
             CamisetaComentarios camisetaComentarios = await this.repo.DetalleCamiseta(idCamiseta);
             Comentario comentario = new Comentario();
-            comentario.UsuarioId=2;
-                //HttpContext.Session.GetObject<int>("IDUSUARIO");
+            comentario.UsuarioId=HttpContext.Session.GetObject<int>("IDUSUARIO");
             comentario.CamisetaId=idCamiseta;
             comentario.IdComentario=await this.repo.GetMaxIdComment();
             comentario.ComentarioTxt=texto;

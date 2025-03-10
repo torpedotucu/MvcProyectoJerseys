@@ -1,6 +1,8 @@
 ﻿@model UsuarioPuro
 @{
     List<Camiseta> camisetas = ViewData["CAMISETAS"] as List<Camiseta>;
+    List<VUsuarioFree> amigos = ViewData["LISTAAMIGOS"] as List<VUsuarioFree>;
+    
 }
 
 
@@ -14,7 +16,11 @@
                 @Model.AliasName
             </p>
             <p class="card-text">@Model.Correo</p>
-            <p class="card-text">@Model.Equipo, @Model.Pais</p
+            <p class="card-text">@Model.Equipo, @Model.Pais</p>
+            <p class="card-text">@ViewData["NUMAMIGOS"]</p>
+            @foreach(VUsuarioFree amigo in amigos){
+                <p>@amigo.Alias</p>
+            }
             <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editProfileModal">Editar Perfil</button>
         </div>
     </div>
@@ -36,11 +42,11 @@
                     <form>
                         <div class="mb-3">
                             <label for="userName" class="form-label">Nombre</label>
-                            <input type="text" class="form-control" id="userName" value="Nombre del Usuario">
+                            <input type="text" class="form-control" name="userName" value="@Model.UserName">
                         </div>
                         <div class="mb-3">
-                            <label for="userEmail" class="form-label">Correo Electrónico</label>
-                            <input type="email" class="form-control" id="userEmail" value="correo@ejemplo.com">
+                            <label for="userEmail" class="form-label">Contraseña</label>
+                            <input type="text" class="form-control" name="password" />
                         </div>
                         <div class="mb-3">
                             <label for="userLocation" class="form-label">Ubicación</label>
