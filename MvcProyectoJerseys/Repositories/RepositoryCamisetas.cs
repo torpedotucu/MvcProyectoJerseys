@@ -56,6 +56,12 @@ namespace MvcProyectoJerseys.Repositories
                            select datos;
              return await consulta.FirstOrDefaultAsync();
         }
+        public async Task<Usuario>GetUsuarioLibre(int idUsuario)
+        {
+            var consulta = await this.context.Usuarios
+                .Where(x => x.IdUsuario==idUsuario).FirstOrDefaultAsync();
+            return consulta;
+        }
 
         public List<Camiseta> GetCamisetasUsuario(int idUsuario)
         {
@@ -271,12 +277,12 @@ namespace MvcProyectoJerseys.Repositories
             return consulta;
         }
         
-        public async Task<List<VUsuarioFree>>GetListaAmigosAsync(int idUsuario)
+        public async Task<List<Usuario>>GetListaAmigosAsync(int idUsuario)
         {
             var sql = "SP_OBTENER_AMIGOS_USUARIO @idusuario";
             SqlParameter paramIdUsuario = new SqlParameter("@idusuario", idUsuario);
-            var consulta = this.context.VUsuarioFrees.FromSqlRaw(sql, paramIdUsuario);
-            List<VUsuarioFree> amigos = await consulta.ToListAsync();
+            var consulta = this.context.Usuarios.FromSqlRaw(sql, paramIdUsuario);
+            List<Usuario> amigos = await consulta.ToListAsync();
             return amigos;
         }
     }

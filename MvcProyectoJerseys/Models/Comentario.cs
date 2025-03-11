@@ -3,20 +3,21 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MvcProyectoJerseys.Models
 {
-    [Table("comentario")]
+    [Table("COMENTARIOS")]
     public class Comentario
     {
         [Key]
-        [Column("idComentario")]
+        [Column("IDCOMENTARIO")]
         public int IdComentario { get; set; }
-        [Column("camisetaId")]
+        [Column("CAMISETAID")]
         public int CamisetaId { get; set; }
-        [Column("usuarioId")]
+        [Column("USUARIOID")]
         public int UsuarioId { get; set; }
-        [Column("textoComentario")]
+        [Column("TEXTOCOMENTARIO")]
         public string ComentarioTxt { get; set; }
-        [Column("fechaComentario")]
+        [Column("FECHACOMENTARIO")]
         public DateTime FechaComentario { get; set; }
-        //public Camiseta Camiseta { get; set; }
+        
+
     }
 }

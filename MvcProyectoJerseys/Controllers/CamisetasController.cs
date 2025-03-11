@@ -132,7 +132,7 @@ namespace MvcProyectoJerseys.Controllers
 
             List<Pais> paises = await this.repo.GetPaisesAsync();
             ViewData["PAISES"]=paises;
-            return View();
+            return RedirectToAction("PerfilUsuario");
         }
 
         public async Task<IActionResult>AgregarAmigo(int idAmigo)
@@ -180,6 +180,11 @@ namespace MvcProyectoJerseys.Controllers
 
         }
 
+        public async Task<IActionResult> GetUsuarioPerfil(int amigoId)
+        {
+            Usuario user = this.repo.
+            return View();
+        }
 
     }
 }

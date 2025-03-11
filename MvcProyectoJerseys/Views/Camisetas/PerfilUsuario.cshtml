@@ -1,8 +1,8 @@
 ﻿@model UsuarioPuro
 @{
     List<Camiseta> camisetas = ViewData["CAMISETAS"] as List<Camiseta>;
-    List<VUsuarioFree> amigos = ViewData["LISTAAMIGOS"] as List<VUsuarioFree>;
-    
+    List<Usuario> amigos = ViewData["LISTAAMIGOS"] as List<Usuario>;
+    int numAmigos =(int) ViewData["NUMAMIGOS"] ;
 }
 
 
@@ -17,14 +17,41 @@
             </p>
             <p class="card-text">@Model.Correo</p>
             <p class="card-text">@Model.Equipo, @Model.Pais</p>
-            <p class="card-text">@ViewData["NUMAMIGOS"]</p>
-            @foreach(VUsuarioFree amigo in amigos){
-                <p>@amigo.Alias</p>
-            }
+            <p class="btn btn-info" data-bs-toggle="modal" data-bs-target="#userListModal">@numAmigos</p>
+            
             <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editProfileModal">Editar Perfil</button>
         </div>
     </div>
-    
+    @if(numAmigos>0){
+        <div class="modal fade" id="userListModal" tabindex="-1" aria-labelledby="userListModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="userListModalLabel">Lista de Usuarios</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <ul class="list-group">
+                            @foreach (Usuario amigo in amigos)
+                            {
+                                <li class="list-group-item d-flex align-items-center">
+                                    <!-- Imagen de perfil -->
+                                    <img src="~/avatar/@amigo.Avatar" class="rounded-circle me-3" width="50" height="50" alt="Foto de @amigo.Alias">
+
+                                    <!-- Alias y Username -->
+                                    <div>
+                                        <strong>@amigo.Alias</strong><br>
+                                        <small class="text-muted">@amigo.UserName</small>
+                                    </div>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    }
     <div>
         <a asp-action="BuscarAmigo" class="btn btn-dark">
             Agregar amigo
@@ -86,7 +113,6 @@
              </div> 
          </div> 
      </div>
-   
     }
 </div>
 

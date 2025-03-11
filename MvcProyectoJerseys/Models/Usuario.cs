@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 namespace MvcProyectoJerseys.Models
 {
     [Table("V_USUARIOS_FREE")]
-    public class VUsuarioFree
+    public class Usuario
     {
         [Key]
         [Column("IDUSUARIO")]
