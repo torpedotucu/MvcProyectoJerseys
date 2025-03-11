@@ -1,0 +1,87 @@
+﻿
+@{
+    List<Camiseta> camisetas = ViewData["CAMISETAS"] as List<Camiseta>;
+    List<Usuario> amigos = ViewData["LISTAAMIGOS"] as List<Usuario>;
+    int numAmigos = (int)ViewData["NUMAMIGOS"];
+    Usuario user =(Usuario) ViewData["USUARIO"];
+}
+
+
+<div class="container mt-4">
+    <!-- Perfil de Usuario -->
+    <div class="card mb-4">
+        <div class="card-body text-center">
+            <img src="~/avatar/@user.Avatar" class="rounded-circle mb-3" width="100" height="100" alt="Usuario">
+            <h5 class="card-title">@user.UserName</h5>
+            <p class="card-text">
+                @user.Alias
+            </p>
+            
+            <p class="card-text">@user.Equipo, @user.Pais</p>
+            <p class="btn btn-info" data-bs-toggle="modal" data-bs-target="#userListModal">@numAmigos</p>
+
+        </div>
+    </div>
+    @if (numAmigos > 0)
+    {
+        <div class="modal fade" id="userListModal" tabindex="-1" aria-labelledby="userListModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="userListModalLabel">Lista de Usuarios</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <ul class="list-group">
+                            @foreach (Usuario amigo in amigos)
+                            {
+                                <li class="list-group-item d-flex align-items-center">
+                                    <!-- Imagen de perfil -->
+                                    <img src="~/avatar/@amigo.Avatar" class="rounded-circle me-3" width="50" height="50" alt="Foto de @amigo.Alias">
+
+                                    <!-- Alias y Username -->
+                                    <div>
+                                        <strong>@amigo.Alias</strong><br>
+                                        <small class="text-muted">@amigo.UserName</small>
+                                    </div>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    }
+    
+    @if (camisetas != null)
+    {
+        <!-- Camisetas del Usuario -->
+        <div class="album py-5 bg-body-tertiary">
+            <div class="container">
+                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+                    @foreach (Camiseta camiseta in camisetas)
+                    {
+                        <div class="col">
+                            <div class="card shadow-sm border-warning">
+                                <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><img src="~/jersey/@camiseta.Imagen" alt="Alternate Text" /></svg>
+                                <div class="card-body">
+                                    @if (camiseta.Descripcion != null)
+                                    {
+                                        <p class="card-text">@camiseta.Descripcion</p>
+                                    }
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="btn-group">
+                                            <a class="btn btn-sm btn-outline-primary" asp-controller="Camisetas" asp-action="DetallesCamiseta" asp-route-idCamiseta="@camiseta.IdCamiseta">View</a>
+                                        </div>
+                                        <small class="text-body-secondary">9 mins</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>

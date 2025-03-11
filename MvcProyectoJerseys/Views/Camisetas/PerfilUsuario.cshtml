@@ -36,13 +36,16 @@
                             {
                                 <li class="list-group-item d-flex align-items-center">
                                     <!-- Imagen de perfil -->
-                                    <img src="~/avatar/@amigo.Avatar" class="rounded-circle me-3" width="50" height="50" alt="Foto de @amigo.Alias">
+                                    <a asp-controller="Camisetas" asp-action="UsuarioPerfil" asp-route-amigoId="@amigo.IdUsuario">
+                                        <img src="~/avatar/@amigo.Avatar" class="rounded-circle me-3" width="50" height="50" alt="Foto de @amigo.Alias">
 
-                                    <!-- Alias y Username -->
-                                    <div>
-                                        <strong>@amigo.Alias</strong><br>
-                                        <small class="text-muted">@amigo.UserName</small>
-                                    </div>
+                                        <!-- Alias y Username -->
+                                        <div>
+                                            <strong>@amigo.Alias</strong><br>
+                                            <small class="text-muted">@amigo.UserName</small>
+                                        </div>
+                                    </a>
+                                    
                                 </li>
                             }
                         </ul>

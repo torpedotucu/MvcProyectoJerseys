@@ -45,7 +45,7 @@ namespace MvcProyectoJerseys.Controllers
             user.FechaUnion=DateTime.Now;
             await this.repo.CreateUsuario(user);
             await this.repo.SubirFichero(avatar, Folders.Avatar);
-            return View();
+            return RedirectToAction("Login");
         }
 
 

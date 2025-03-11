@@ -43,7 +43,7 @@ namespace MvcProyectoJerseys.Controllers
         {
             CamisetaComentarios camisetaComentarios = await this.repo.DetalleCamiseta(idCamiseta);
             Comentario comentario = new Comentario();
-            comentario.UsuarioId=HttpContext.Session.GetObject<int>("IDUSUARIO");
+            comentario.UsuarioId=HttpContext.Session.GetObject<UsuarioPuro>("USUARIO").IdUsuario;
             comentario.CamisetaId=idCamiseta;
             comentario.IdComentario=await this.repo.GetMaxIdComment();
             comentario.ComentarioTxt=texto;
@@ -180,9 +180,14 @@ namespace MvcProyectoJerseys.Controllers
 
         }
 
-        public async Task<IActionResult> GetUsuarioPerfil(int amigoId)
+        public async Task<IActionResult> UsuarioPerfil(int amigoId)
         {
-            Usuario user = this.repo.
+            Usuario user = await this.repo.GetUsuarioLibre(amigoId);
+            ViewData["USUARIO"]=user;
+            ViewData["NUMAMIGOS"]=await this.repo.GetNumberAmigosAsync(amigoId);
+            ViewData["LISTAAMIGOS"]=await this.repo.GetListaAmigosAsync(amigoId);
+            List<Camiseta> camisetas = this.repo.GetCamisetasUsuario(amigoId);
+            ViewData["CAMISETAS"] = camisetas;
             return View();
         }
 
