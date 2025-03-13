@@ -7,11 +7,11 @@ namespace MvcProyectoJerseys.Models
     public class Pais
     {
         [Key]
-        [Column("id")]
-        public int IdPais { get; set; }
         [Column("codigo")]
         public string CodigoPais { get; set; }
         [Column("nombre")]
         public string NombrePais { get; set; }
+
+        //public Camiseta Camiseta { get; set; }
     }
 }

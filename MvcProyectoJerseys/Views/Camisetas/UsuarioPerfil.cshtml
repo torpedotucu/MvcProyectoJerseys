@@ -36,6 +36,7 @@
                             @foreach (Usuario amigo in amigos)
                             {
                                 <li class="list-group-item d-flex align-items-center">
+                                    <a asp-controller="Camisetas" asp-action="UsuarioPerfil" asp-route-amigoId="@amigo.IdUsuario">
                                     <!-- Imagen de perfil -->
                                     <img src="~/avatar/@amigo.Avatar" class="rounded-circle me-3" width="50" height="50" alt="Foto de @amigo.Alias">
 
@@ -44,6 +45,7 @@
                                         <strong>@amigo.Alias</strong><br>
                                         <small class="text-muted">@amigo.UserName</small>
                                     </div>
+                                    </a>
                                 </li>
                             }
                         </ul>

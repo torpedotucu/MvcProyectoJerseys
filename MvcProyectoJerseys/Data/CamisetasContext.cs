@@ -15,7 +15,11 @@ namespace MvcProyectoJerseys.Data
         public DbSet<UsuarioPuro> UsuariosPuros { get; set;}
         public DbSet<Pais> Paises { get; set; }
 
+        public DbSet<Like> Likes { get; set; }
+
         public DbSet<Amistad> Amistades { get; set; }
+
+        public DbSet<Etiqueta> Etiquetas { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

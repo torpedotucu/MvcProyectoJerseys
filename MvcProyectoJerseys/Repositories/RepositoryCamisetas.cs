@@ -7,6 +7,7 @@ using MvcProyectoJerseys.Data;
 using MvcProyectoJerseys.Helpers;
 using MvcProyectoJerseys.Models;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 
 namespace MvcProyectoJerseys.Repositories
 {
@@ -25,9 +26,10 @@ namespace MvcProyectoJerseys.Repositories
         }
         public async Task<UsuarioPuro?> LoginUsuario(string email, string contrasena)
         {
-            var consulta = from datos in this.context.UsuariosPuros
-                           where datos.Correo==email
-                           select datos;
+            //var consulta = from datos in this.context.UsuariosPuros
+            //               where datos.Correo==email
+            //               select datos;
+            var consulta = this.context.UsuariosPuros.Where(x => x.Correo==email);
             UsuarioPuro user = await consulta.FirstOrDefaultAsync();
             if (user==null)
             {
@@ -63,43 +65,45 @@ namespace MvcProyectoJerseys.Repositories
             return consulta;
         }
 
-        public List<Camiseta> GetCamisetasUsuario(int idUsuario)
+        public async Task<List<Camiseta>> GetCamisetasUsuario(int idUsuario)
         {
-            var consulta = from datos in this.context.Camisetas
-                           where datos.IdUsuario== idUsuario
-                           select datos;
+            
+            var consulta = this.context.Camisetas.Where(c => c.IdUsuario==idUsuario);
 
-            List<Camiseta> camisetas = new List<Camiseta>();
-            Console.WriteLine(consulta);
-            foreach (var row in consulta)
-            {
-                Console.WriteLine(row.IdCamiseta);
-                Camiseta cam = new Camiseta();
-                cam.IdCamiseta = row.IdCamiseta;
-                cam.IdUsuario = row.IdUsuario;
-                cam.Equipo = row.Equipo;
-                cam.Pais = row.Pais;
-                cam.Year = row.Year;
-                cam.Marca = row.Marca;
-                cam.Equipacion = row.Equipacion;
-                cam.Descripcion= row.Descripcion;
-                cam.Posicion = row.Posicion;
-                cam.Condicion = row.Condicion;
-                cam.Dorsal = row.Dorsal;
-                cam.Jugador = row.Jugador;
-                cam.EsActiva = row.EsActiva;
-                cam.FechaSubida = row.FechaSubida;
-                cam.Imagen = row.Imagen;
-                camisetas.Add(cam);
-            }
+            List<Camiseta> camisetas = await consulta.ToListAsync();
+            //Console.WriteLine(consulta);
+            //foreach (var row in consulta)
+            //{
+            //    Console.WriteLine(row.IdCamiseta);
+            //    Camiseta cam = new Camiseta();
+            //    cam.IdCamiseta = row.IdCamiseta;
+            //    cam.IdUsuario = row.IdUsuario;
+            //    cam.Equipo = row.Equipo;
+            //    cam.CodigoPais = row.CodigoPais;
+            //    cam.Year = row.Year;
+            //    cam.Marca = row.Marca;
+            //    cam.Equipacion = row.Equipacion;
+            //    cam.Descripcion= row.Descripcion;
+            //    cam.Posicion = row.Posicion;
+            //    cam.Condicion = row.Condicion;
+            //    cam.Dorsal = row.Dorsal;
+            //    cam.Jugador = row.Jugador;
+            //    cam.EsActiva = row.EsActiva;
+            //    cam.FechaSubida = row.FechaSubida;
+            //    cam.Imagen = row.Imagen;
+            //    camisetas.Add(cam);
+            //}
             return camisetas;
         }
         public async Task<Camiseta> GetCamiseta(int idCamiseta)
         {
-            var consulta = from datos in this.context.Camisetas
-                           where datos.IdCamiseta == idCamiseta
-                           select datos;
-            return await consulta.FirstOrDefaultAsync();
+            //var consulta = from datos in this.context.Camisetas
+            //               where datos.IdCamiseta == idCamiseta
+            //               select datos;
+            var consulta = this.context.Camisetas.Include(p => p.Pais)
+                .Where(c => c.IdCamiseta==idCamiseta);
+            Camiseta camiseta = await consulta.FirstOrDefaultAsync();
+            return camiseta;
         }
 
         public async Task<int> SubirCamiseta(Camiseta camiseta)
@@ -137,11 +141,9 @@ namespace MvcProyectoJerseys.Repositories
            
         }
         public async Task<List<Comentario>> GetComentariosAsync(int idCamiseta)
-        {
-            var consulta = from datos in this.context.Comentarios
-                           where datos.CamisetaId==idCamiseta
-                           select datos;
-            return await consulta.ToListAsync();
+        { 
+            var comentarios = await this.context.Comentarios.Include(c => c.Usuario).Where(c => c.CamisetaId==idCamiseta).ToListAsync();
+            return comentarios;
         }
         public async Task<CamisetaComentarios> DetalleCamiseta(int idCamiseta)
         {
@@ -196,6 +198,18 @@ namespace MvcProyectoJerseys.Repositories
             else
             {
                 return await this.context.Comentarios.MaxAsync(x => x.IdComentario)+1;
+            }
+        }
+
+        public async Task<int> GetMaxIdLike()
+        {
+            if (this.context.Likes.Count()==0)
+            {
+                return 1;
+            }
+            else
+            {
+                return await this.context.Likes.MaxAsync(x => x.idLike)+1;
             }
         }
 
@@ -285,5 +299,50 @@ namespace MvcProyectoJerseys.Repositories
             List<Usuario> amigos = await consulta.ToListAsync();
             return amigos;
         }
+
+
+        //PARA VERSION DOS
+        //COMPROBAR QUE EL USUARIO TIENE LIKE
+        public async Task AddLike(int idUser,int idCamiseta)
+        {
+            Like like = new Like
+            {
+                idLike=await this.GetMaxIdLike(),
+                idUsuario=idUser,
+                idCamiseta=idCamiseta,
+                FechaLike=DateTime.Now
+            };
+            await this.context.Likes.AddAsync(like);
+            await this.context.SaveChangesAsync();
+        }
+        public async Task HadLike(int camisetaId, int userId)
+        {
+            var like = await this.context.Likes.FirstOrDefaultAsync(l => l.idUsuario==userId && l.idCamiseta==camisetaId);
+            if (like==null)
+            {
+                this.AddLike(userId, camisetaId);
+            }
+            else
+            {
+                this.context.Likes.Remove(like);
+                await this.context.SaveChangesAsync();
+            }
+            
+        }
+
+        public async Task InsertEtiquetas(List<string> etiquetas, int idCamiseta)
+        {
+            foreach(var etiqueta in etiquetas)
+            {
+                var sql = "SP_INSERT_ETIQUETA_CAMISETA @nombreEtiqueta, @idCamiseta";
+                SqlParameter paramNombre = new SqlParameter("@nombreEtiqueta", etiqueta);
+                SqlParameter paramCamiseta = new SqlParameter("@idCamiseta", idCamiseta);
+                this.context.Etiquetas.FromSqlRaw(sql, paramNombre, paramCamiseta);
+            }
+        }
+
+        
+
+        
     }
 }

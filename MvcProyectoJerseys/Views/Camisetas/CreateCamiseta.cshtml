@@ -82,6 +82,14 @@
                                     <label class="form-label">Descripción</label>
                                     <textarea maxlength="255" class="form-control" name="descripcion"></textarea>
                                 </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Etiquetas</label>
+                                    <input type="text" id="tagInput" class="form-control" placeholder="Etiquetas" />
+                                </div>
+                                <div id="tagsContainer" class="mt-3">
+
+                                </div>
+                                <input type="hidden" name="etiquetas" id="hiddenTags"
                                 <button type="button" class="btn btn-outline-success" onclick="prevStep(3)">Atrás</button>
                                 <button type="submit" class="btn btn-success">Subir Camiseta</button>
                             </div>
@@ -109,4 +117,39 @@
 
     // Mostrar el primer paso al cargar la página
     showStep(1);
+    document.addEventListener("DOMContentLoaded", function () {
+            const tagInput = document.getElementById("tagInput");
+            const tagsContainer = document.getElementById("tagsContainer");
+            const hiddenTags = document.getElementById("hiddenTags");
+
+            let tags = [];
+
+            tagInput.addEventListener("keypress", function (event) {
+                if (event.key === "Enter") {
+                    event.preventDefault();
+                    let tagText = tagInput.value.trim();
+                    if (tagText !== "" && !tags.includes(tagText)) {
+                        tags.push(tagText);
+                        updateTags();
+                    }
+                    tagInput.value = "";
+                }
+            });
+
+            function updateTags() {
+                tagsContainer.innerHTML = "";
+                tags.forEach(tag => {
+                    let tagElement = document.createElement("span");
+                    tagElement.classList.add("tag");
+                    tagElement.innerHTML = `${tag} <span class="remove-tag">×</span>`;
+                    tagElement.querySelector(".remove-tag").addEventListener("click", function () {
+                        tags = tags.filter(t => t !== tag);
+                        updateTags();
+                    });
+                    tagsContainer.appendChild(tagElement);
+                });
+
+                hiddenTags.value = tags.join(",");
+            }
+        });
 </script>

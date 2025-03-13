@@ -13,8 +13,8 @@ namespace MvcProyectoJerseys.Models
         [Column("Equipo")]
         public string Equipo { get; set; }
 
-        [Column("Pais")]
-        public string Pais { get; set; }
+        [Column("CodigoPais")]
+        public string CodigoPais { get; set; }
 
         [Column("Year")]
         public int Year { get; set; }
@@ -52,5 +52,8 @@ namespace MvcProyectoJerseys.Models
         public string? Imagen { get; set; }
 
         public List<Comentario> Comentarios { get; set; }
+
+        [ForeignKey("CodigoPais")]
+        public Pais Pais { get; set; }
     }
 }

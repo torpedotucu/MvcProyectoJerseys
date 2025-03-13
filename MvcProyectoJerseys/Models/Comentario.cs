@@ -18,6 +18,6 @@ namespace MvcProyectoJerseys.Models
         [Column("FECHACOMENTARIO")]
         public DateTime FechaComentario { get; set; }
         
-
+        public Usuario Usuario { get; set; }
     }
 }
