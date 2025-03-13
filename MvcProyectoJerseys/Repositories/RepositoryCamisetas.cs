@@ -24,12 +24,11 @@ namespace MvcProyectoJerseys.Repositories
             this.hostEnvironment=hostEnvironment;
             this.helperPathProvider=helper;
         }
-        public async Task<UsuarioPuro?> LoginUsuario(string email, string contrasena)
+        public async Task<Usuario?> LoginUsuario(string email, string contrasena)
         {
-            //var consulta = from datos in this.context.UsuariosPuros
-            //               where datos.Correo==email
-            //               select datos;
+            
             var consulta = this.context.UsuariosPuros.Where(x => x.Correo==email);
+            
             UsuarioPuro user = await consulta.FirstOrDefaultAsync();
             if (user==null)
             {
@@ -43,7 +42,8 @@ namespace MvcProyectoJerseys.Repositories
                 bool response = HelperCryptography.CompararArrays(temp, passBytes);
                 if (response==true)
                 {
-                    return user;
+                    Usuario usuario =await this.context.Usuarios.Where(u => u.IdUsuario==user.IdUsuario).FirstOrDefaultAsync();
+                    return usuario ;
                 }
                 else
                 {
@@ -71,28 +71,7 @@ namespace MvcProyectoJerseys.Repositories
             var consulta = this.context.Camisetas.Where(c => c.IdUsuario==idUsuario);
 
             List<Camiseta> camisetas = await consulta.ToListAsync();
-            //Console.WriteLine(consulta);
-            //foreach (var row in consulta)
-            //{
-            //    Console.WriteLine(row.IdCamiseta);
-            //    Camiseta cam = new Camiseta();
-            //    cam.IdCamiseta = row.IdCamiseta;
-            //    cam.IdUsuario = row.IdUsuario;
-            //    cam.Equipo = row.Equipo;
-            //    cam.CodigoPais = row.CodigoPais;
-            //    cam.Year = row.Year;
-            //    cam.Marca = row.Marca;
-            //    cam.Equipacion = row.Equipacion;
-            //    cam.Descripcion= row.Descripcion;
-            //    cam.Posicion = row.Posicion;
-            //    cam.Condicion = row.Condicion;
-            //    cam.Dorsal = row.Dorsal;
-            //    cam.Jugador = row.Jugador;
-            //    cam.EsActiva = row.EsActiva;
-            //    cam.FechaSubida = row.FechaSubida;
-            //    cam.Imagen = row.Imagen;
-            //    camisetas.Add(cam);
-            //}
+            
             return camisetas;
         }
         public async Task<Camiseta> GetCamiseta(int idCamiseta)
@@ -121,24 +100,44 @@ namespace MvcProyectoJerseys.Repositories
 
 
         //REVISAR
-        public async Task EditarPerfil(UsuarioPuro u)
+        public async Task EditarPerfil(int idUser,string? alias, IFormFile? avatar, string? equipo, string? contrasena)
         {
-            //UsuarioPuro user = await this.context.UsuariosPuros.FirstOrDefaultAsync(c => c.IdUsuario == u.IdUsuario);
-            //if (user!=null)
-            //{
-            //    user.IdUsuario = u.IdUsuario;
-            //    user.UserName = u.UserName;
-            //    user.Pais = u.Pais;
-            //    user.AliasName = u.AliasName;
-            //    user.Avatar = u.Avatar;
-            //    user.Correo=u.Correo;
-            //    user.Salt=u.Salt;
-            //    user.Contrasena = HelperCryptography.EncryptPassword(u.Contrasena,u.Salt);//REVISAR
-            //    user.Equipo = u.Equipo;
-            //    user.FechaUnion=u.FechaUnion;
-            //    await this.context.SaveChangesAsync();
-            //}
-           
+            UsuarioPuro usuarioPuro = await this.GetUsuario(idUser);
+            if (usuarioPuro == null)
+            {
+                throw new Exception("Usuario no encontrado.");
+            }
+            bool cambios = false;
+            if (alias!=null)
+            {
+                usuarioPuro.AliasName=alias;
+                cambios=true;
+            }
+            if (equipo!=null)
+            {
+                usuarioPuro.Equipo=equipo;
+                cambios=true;
+            }
+            if (avatar!=null)
+            {
+                string filename = this.GenerateUniqueFileName(idUser, avatar);
+                usuarioPuro.Avatar=filename;
+                await this.SubirFichero(avatar, Folders.Avatar, filename);
+                cambios=true;
+            }
+            if (contrasena!=null)
+            {
+                usuarioPuro.Salt=HelperCryptography.GenerateSalt();
+                usuarioPuro.Contrasena=HelperCryptography.EncryptPassword(contrasena, usuarioPuro.Salt);
+                cambios=true;
+            }
+            if (cambios)
+            {
+                this.context.UsuariosPuros.Update(usuarioPuro);
+                await this.context.SaveChangesAsync();
+            }
+
+
         }
         public async Task<List<Comentario>> GetComentariosAsync(int idCamiseta)
         { 
@@ -231,11 +230,11 @@ namespace MvcProyectoJerseys.Repositories
             }
         }
 
-        public async Task SubirFichero(IFormFile file,Folders folders)
+        public async Task SubirFichero(IFormFile file,Folders folders, string nombreArchivo)
         {
             string rootFolder = this.hostEnvironment.WebRootPath;
-            string fileName = file.FileName;
-            string path = this.helperPathProvider.MapPath(fileName, folders);
+            
+            string path = this.helperPathProvider.MapPath(nombreArchivo, folders);
 
             using(Stream stream=new FileStream(path, FileMode.Create))
             {
@@ -256,9 +255,9 @@ namespace MvcProyectoJerseys.Repositories
 
         }
 
-        public async Task<UsuarioPuro>FindUsuarioAmistadCode(string friendCode)
+        public async Task<Usuario>FindUsuarioAmistadCode(string friendCode)
         {
-            var consulta = await this.context.UsuariosPuros.Where(x => x.CodeAmistad==friendCode).FirstOrDefaultAsync();
+            var consulta = await this.context.Usuarios.Where(x => x.CodeAmistad==friendCode).FirstOrDefaultAsync();
             return consulta;
         }
         
@@ -332,15 +331,34 @@ namespace MvcProyectoJerseys.Repositories
 
         public async Task InsertEtiquetas(List<string> etiquetas, int idCamiseta)
         {
-            foreach(var etiqueta in etiquetas)
+            Console.Write(etiquetas);
+            foreach(string etiqueta in etiquetas)
             {
+                
                 var sql = "SP_INSERT_ETIQUETA_CAMISETA @nombreEtiqueta, @idCamiseta";
                 SqlParameter paramNombre = new SqlParameter("@nombreEtiqueta", etiqueta);
                 SqlParameter paramCamiseta = new SqlParameter("@idCamiseta", idCamiseta);
-                this.context.Etiquetas.FromSqlRaw(sql, paramNombre, paramCamiseta);
+                var consulta= await this.context.Etiquetas.FromSqlRaw(sql, paramNombre, paramCamiseta).ToListAsync();
+
+                
             }
         }
 
+        public async Task<List<Etiqueta>>GetEtiquetas(int idCamiseta)
+        {
+            var sql = "SP_GET_ETIQUETA_CAMISETA @idCamiseta";
+            SqlParameter paramCamiseta = new SqlParameter("@idCamiseta", idCamiseta);
+            var consulta = await this.context.Etiquetas.FromSqlRaw(sql, paramCamiseta).ToListAsync();
+            return consulta;
+        }
+
+        public string GenerateUniqueFileName(int idUser, IFormFile archivo)
+        {
+            string timeStamp = DateTime.Now.ToString("yyyyMMdd_HHmmssfff");
+            string extension = Path.GetExtension(archivo.FileName);
+            string nombreUnico = $"{idUser}_{timeStamp}{extension}";
+            return nombreUnico;
+        }
         
 
         

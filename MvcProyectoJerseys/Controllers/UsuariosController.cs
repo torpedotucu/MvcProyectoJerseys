@@ -32,7 +32,8 @@ namespace MvcProyectoJerseys.Controllers
             List<Pais> paises = await this.repo.GetPaisesAsync();
             ViewData["PAISES"]=paises;
             UsuarioPuro user=new UsuarioPuro();
-            user.IdUsuario=await this.repo.GetMaxIdUsuario();
+            int idUser=await this.repo.GetMaxIdUsuario();
+            user.IdUsuario=idUser;
             user.UserName=nombre;
             user.AliasName=alias;
             user.Correo=correo;
@@ -41,10 +42,11 @@ namespace MvcProyectoJerseys.Controllers
             user.Equipo=equipo;
             user.CodeAmistad=this.repo.GenerateCodeAmistadUsuario();
             user.Pais=pais;
-            user.Avatar=avatar.FileName;
+            string filename = this.repo.GenerateUniqueFileName(idUser, avatar);
+            user.Avatar=filename;
             user.FechaUnion=DateTime.Now;
             await this.repo.CreateUsuario(user);
-            await this.repo.SubirFichero(avatar, Folders.Avatar);
+            await this.repo.SubirFichero(avatar, Folders.Avatar, filename);
             return RedirectToAction("Login");
         }
 
@@ -59,7 +61,7 @@ namespace MvcProyectoJerseys.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(string correo, string password)
         {
-            UsuarioPuro user = await this.repo.LoginUsuario(correo, password);
+            Usuario user = await this.repo.LoginUsuario(correo, password);
             if (user==null)
             {
                 ViewBag.ERROR=true;

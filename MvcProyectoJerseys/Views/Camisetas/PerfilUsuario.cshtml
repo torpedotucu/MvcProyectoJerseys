@@ -1,4 +1,4 @@
-﻿@model UsuarioPuro
+﻿@model Usuario
 @{
     List<Camiseta> camisetas = ViewData["CAMISETAS"] as List<Camiseta>;
     List<Usuario> amigos = ViewData["LISTAAMIGOS"] as List<Usuario>;
@@ -13,7 +13,7 @@
             <img src="~/avatar/@Model.Avatar" class="rounded-circle mb-3" width="100" height="100" alt="Usuario">
             <h5 class="card-title">@Model.UserName</h5>
             <p class="card-text">
-                @Model.AliasName
+                @Model.Alias
             </p>
             <p class="card-text">@Model.Correo</p>
             <p class="card-text">@Model.Equipo, @Model.Pais</p>
@@ -69,18 +69,23 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form>
+                    <form method="post" enctype="multipart/form-data">
+                        @Html.AntiForgeryToken()
                         <div class="mb-3">
-                            <label for="userName" class="form-label">Nombre</label>
-                            <input type="text" class="form-control" name="userName" value="@Model.UserName">
+                            <label for="alias" class="form-label">Alias</label>
+                            <input type="text" class="form-control" name="alias" value="@Model.Alias">
                         </div>
                         <div class="mb-3">
-                            <label for="userEmail" class="form-label">Contraseña</label>
-                            <input type="text" class="form-control" name="password" />
+                            <label for="contrasena" class="form-label">Contraseña</label>
+                            <input type="text" class="form-control" name="contrasena" />
                         </div>
                         <div class="mb-3">
-                            <label for="userLocation" class="form-label">Ubicación</label>
-                            <input type="text" class="form-control" id="userLocation" value="Ciudad, País">
+                            <label for="equipo" class="form-label">Equipo</label>
+                            <input type="text" class="form-control" id="equipo" name="equipo" value="@Model.Equipo">
+                        </div>
+                        <div class="=mb-3">
+                            <label for="avatar" class="form-label">Avatar</label>
+                            <input name="avatar" type="file" class="form-control" accept="image/*" required />
                         </div>
                         <button type="submit" class="btn btn-primary">Guardar Cambios</button>
                     </form>
@@ -105,7 +110,7 @@
                                  <div class="d-flex justify-content-between align-items-center"> 
                                      <div class="btn-group">
                                             <a class="btn btn-sm btn-outline-primary" asp-controller="Camisetas" asp-action="DetallesCamiseta" asp-route-idCamiseta="@camiseta.IdCamiseta">View</a>
-                                            <button type="button" class="btn btn-sm btn-outline-secondary">Archivar</button>
+                                            <a class="btn btn-sm btn-outline-secondary" asp-controller="Camisetas" asp-action="UpdateCamiseta" asp-route-idCamiseta="@camiseta.IdCamiseta">Modificar</a>
                                      </div> 
                                      <small class="text-body-secondary">9 mins</small> 
                                  </div> 
