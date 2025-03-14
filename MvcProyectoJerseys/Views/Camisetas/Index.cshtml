@@ -6,9 +6,9 @@
 <div class="container mt-4">
     <div class="text-center mb-4">
         <h1 class="display-4 fw-bold" style="color: #1e88e5; text-shadow: 1px 1px 3px rgba(0,0,0,0.1);">
-            <i class="fas fa-tshirt me-2"></i>Colección de Camisetas
+            <i class="fas fa-tshirt me-2"></i>SOCIAL
         </h1>
-        <p class="lead text-muted">Explora nuestra colección de jerseys deportivos de todo el mundo</p>
+        <p class="lead text-muted">Consulta las ultimas publicaciones de tus amigos</p>
     </div>
     
     <div class="row">
@@ -17,14 +17,14 @@
             <div class="col-md-6 col-lg-4 mb-4">
                 <div class="card h-100 shadow-sm rounded-4 overflow-hidden jersey-card">
                     <div class="card-header bg-white border-bottom-0 d-flex align-items-center py-3">
-                        <a asp-action="UsuarioPerfil" asp-route-idAmigo="@camiseta.IdUsuario" class="me-2">
+                        <a asp-action="UsuarioPerfil" asp-route-amigoId="@camiseta.IdUsuario" class="me-2">
                             <img src="~/avatar/@camiseta.Usuario.Avatar" class="rounded-circle shadow-sm" 
                                 width="50" height="50" alt="@camiseta.Usuario.Alias"
                                 style="border: 2px solid #2196f3; object-fit: cover;">
                         </a>
                         <div>
                             <h6 class="mb-0 fw-bold">@camiseta.Usuario.Alias</h6>
-                            <span class="text-muted small">Coleccionista</span>
+                            <span class="text-muted small">dd</span>
                         </div>
                         <div class="ms-auto">
                             <span class="badge rounded-pill" style="background-color: #0d47a1;">@camiseta.Year</span>
@@ -113,7 +113,7 @@
             font-size: 0.9rem;
         }
         
-        /* Animación para las tarjetas al cargar la página */
+        
         @@keyframes fadeInUp {
             from {
                 opacity: 0;
@@ -145,6 +145,7 @@
     {
         return condition?.ToLower() switch
         {
+            "excelente"=>"#4caf50",
             "nueva" => "#4caf50",
             "como nueva" => "#8bc34a",
             "buena" => "#ffc107",

@@ -1,6 +1,6 @@
 ﻿@if (Context.User.Identity.IsAuthenticated == false)
 {
-    <li class="nav-item">
+    <li class="nav-item list-group-item">
         <a class="nav-link-sport"
            asp-controller="Camisetas"
            asp-action="PerfilUsuario">
@@ -10,7 +10,12 @@
 }
 else
 {
-    <li class="nav-item">
+    <li class="nav-item list-group-item">
+        <a asp-action="CreateCamiseta" asp-controller="Camisetas" class="nav-link-sport">
+            <i class="fas fa-tshirt"></i> Nueva Camiseta
+        </a>
+    </li>
+    <li class="nav-item list-group-item">
         <a class="nav-link-sport"
            asp-controller="Usuarios"
            asp-action="Logout">
@@ -20,9 +25,10 @@ else
             </span>
         </a>
     </li>
-    <li class="nav-item">
+
+    <li class="nav-item list-group-item">
         <a class="nav-link-sport"
-           asp-controller="Usuarios"
+           asp-controller="Camisetas"
            asp-action="PerfilUsuario">
             <i class="fas fa-user-circle me-1"></i> Mi perfil
         </a>

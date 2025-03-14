@@ -37,23 +37,19 @@
 
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        <li class="nav-item">
+                        <li class="nav-item list-group-item">
                             <a asp-controller="Camisetas" asp-action="Index"
                                class="nav-link-sport @(ViewContext.RouteData.Values["Action"].ToString() == "Index" ? "active" : "")">
                                 <i class="fas fa-home me-1"></i> Home
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a asp-action="PerfilUsuario" asp-controller="Camisetas"
-                               class="nav-link-sport @(ViewContext.RouteData.Values["Action"].ToString() == "PerfilUsuario" ? "active" : "")">
-                                <i class="fas fa-user me-1"></i> Perfil
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a asp-action="CreateCamiseta" asp-controller="Camisetas" class="btn-create">
-                                <i class="fas fa-tshirt"></i> Nueva Camiseta
-                            </a>
-                        </li>
+                        @* <li class="nav-item"> *@
+                        @*     <a asp-action="PerfilUsuario" asp-controller="Camisetas" *@
+                        @*        class="nav-link-sport @(ViewContext.RouteData.Values["Action"].ToString() == "PerfilUsuario" ? "active" : "")"> *@
+                        @*         <i class="fas fa-user me-1"></i> Perfil *@
+                        @*     </a> *@
+                        @* </li> *@
+                        
                         
                     </ul>
                     <partial name="_MenuLogin" />

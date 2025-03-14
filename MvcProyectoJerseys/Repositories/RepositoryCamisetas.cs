@@ -436,8 +436,11 @@ namespace MvcProyectoJerseys.Repositories
             this.context.Remove(cam);
             await this.context.SaveChangesAsync();
         }
-        
+        public async Task<bool> ExisteCorreo(string email)
+        {
+            return await this.context.Usuarios.AnyAsync(u => u.Correo == email);
+        }
 
-        
+
     }
 }

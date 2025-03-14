@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 using MvcProyectoJerseys.Extensions;
 using MvcProyectoJerseys.Helpers;
 using MvcProyectoJerseys.Models;
@@ -32,6 +33,11 @@ namespace MvcProyectoJerseys.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateUsuario(string nombre, string alias, IFormFile avatar,string correo, string contrasena, string equipo, string pais)
         {
+            if (await this.repo.ExisteCorreo(correo))
+            {
+                ModelState.AddModelError("Email", "El correo ya está registrado.");
+                return View();
+            }
             List<Pais> paises = await this.repo.GetPaisesAsync();
             ViewData["PAISES"]=paises;
             UsuarioPuro user=new UsuarioPuro();
