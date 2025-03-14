@@ -1,40 +1,156 @@
 ﻿@model List<Camiseta>
-
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Colección de Camisetas";
 }
 
-<h1>@ViewData["Title"]</h1>
-
 <div class="container mt-4">
+    <div class="text-center mb-4">
+        <h1 class="display-4 fw-bold" style="color: #1e88e5; text-shadow: 1px 1px 3px rgba(0,0,0,0.1);">
+            <i class="fas fa-tshirt me-2"></i>Colección de Camisetas
+        </h1>
+        <p class="lead text-muted">Explora nuestra colección de jerseys deportivos de todo el mundo</p>
+    </div>
+    
     <div class="row">
-        <div class="col-md-8 mx-auto">
-            <!-- Iterar sobre las camisetas con foreach -->
-            @foreach (var camiseta in Model)
-            {
-                <div class="card mb-4">
-                    <div class="card-header d-flex align-items-center">
-                        <!-- Mostrar el avatar del usuario -->
-                        <a asp-action="UsuarioPerfil" asp-route-idAmigo="@camiseta.IdUsuario">
-                            <img src="~/avatar/@camiseta.Usuario.Avatar" class="rounded-circle me-2" width="40" height="40" alt="Avatar">
+        @foreach (var camiseta in Model)
+        {
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100 shadow-sm rounded-4 overflow-hidden jersey-card">
+                    <div class="card-header bg-white border-bottom-0 d-flex align-items-center py-3">
+                        <a asp-action="UsuarioPerfil" asp-route-idAmigo="@camiseta.IdUsuario" class="me-2">
+                            <img src="~/avatar/@camiseta.Usuario.Avatar" class="rounded-circle shadow-sm" 
+                                width="50" height="50" alt="@camiseta.Usuario.Alias"
+                                style="border: 2px solid #2196f3; object-fit: cover;">
                         </a>
                         <div>
-                            <strong>@camiseta.Usuario.Alias</strong> <br>
-                            <small class="text-muted">@camiseta.Usuario.Alias</small> <!-- Suponiendo que tienes un nombre en el usuario -->
+                            <h6 class="mb-0 fw-bold">@camiseta.Usuario.Alias</h6>
+                            <span class="text-muted small">Coleccionista</span>
+                        </div>
+                        <div class="ms-auto">
+                            <span class="badge rounded-pill" style="background-color: #0d47a1;">@camiseta.Year</span>
                         </div>
                     </div>
-                    <div class="card-body">
-                        <!-- Imagen de la camiseta -->
-                        <a asp-action="DetallesCamiseta" asp-controller="Camisetas" asp-route-idCamiseta="@camiseta.IdCamiseta">
-                            <img src="~/jersey/@camiseta.Imagen" class="img-fluid rounded mb-2" alt="Camiseta de fútbol">
-                            <p><strong>Equipo:</strong> @camiseta.Equipo (@camiseta.Year)</p>
-                            <p><strong>Marca:</strong> @camiseta.Marca</p>
-                            <p><strong>Condición:</strong> @camiseta.Condicion</p>
-                        </a>
-                    </div>
+                    
+                    <a asp-action="DetallesCamiseta" asp-controller="Camisetas" 
+                       asp-route-idCamiseta="@camiseta.IdCamiseta" class="text-decoration-none">
+                        <div class="position-relative jersey-img-container">
+                            <img src="~/jersey/@camiseta.Imagen" class="card-img-top jersey-img" 
+                                 alt="@camiseta.Equipo" style="height: 280px; object-fit: cover;">
+                            <div class="jersey-overlay d-flex flex-column justify-content-end p-3">
+                                <h5 class="text-white fw-bold mb-0">@camiseta.Equipo</h5>
+                            </div>
+                        </div>
+                        
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="fw-bold text-primary">@camiseta.Marca</span>
+                                <span class="badge rounded-pill" 
+                                      style="background-color: @GetConditionColor(camiseta.Condicion)">
+                                    @camiseta.Condicion
+                                </span>
+                            </div>
+                            
+                            <div class="jersey-features">
+                                <span class="d-inline-block me-3 mb-2">
+                                    <i class="fas fa-futbol me-1 text-secondary"></i> @camiseta.Equipo
+                                </span>
+                                <span class="d-inline-block me-3 mb-2">
+                                    <i class="fas fa-tag me-1 text-secondary"></i> @camiseta.Marca
+                                </span>
+                                <span class="d-inline-block mb-2">
+                                    <i class="fas fa-calendar me-1 text-secondary"></i> @camiseta.Year
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div class="card-footer bg-white border-top-0 text-end">
+                            <button class="btn btn-sm" style="background-color: #1e88e5; color: white; border-radius: 20px;">
+                                <i class="fas fa-info-circle me-1"></i> Ver detalles
+                            </button>
+                        </div>
+                    </a>
                 </div>
-            }
-        </div>
-
+            </div>
+        }
     </div>
 </div>
+
+@section Styles {
+    <style>
+        .jersey-card {
+            transition: all 0.3s ease;
+            border: none;
+        }
+        
+        .jersey-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15) !important;
+        }
+        
+        .jersey-img-container {
+            overflow: hidden;
+        }
+        
+        .jersey-img {
+            transition: all 0.5s ease;
+        }
+        
+        .jersey-card:hover .jersey-img {
+            transform: scale(1.05);
+        }
+        
+        .jersey-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            transition: all 0.3s ease;
+        }
+        
+        .jersey-features {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        /* Animación para las tarjetas al cargar la página */
+        @@keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .col-md-6 {
+            animation: fadeInUp 0.5s ease forwards;
+            opacity: 0;
+        }
+        
+        @for (int i = 0; i < 12; i++) {
+            <text>
+            .col-md-6:nth-child(@(i+1)) {
+                animation-delay: @(i * 0.1)s;
+            }
+            </text>
+        }
+    </style>
+}
+
+@functions {
+    public string GetConditionColor(string condition)
+    {
+        return condition?.ToLower() switch
+        {
+            "nueva" => "#4caf50",
+            "como nueva" => "#8bc34a",
+            "buena" => "#ffc107",
+            "aceptable" => "#ff9800",
+            "mala" => "#f44336",
+            _ => "#9e9e9e"
+        };
+    }
+}

@@ -1,93 +1,210 @@
-﻿
-@{
-    List<Comentario> comentarios = ViewData["COMENTARIOS"] as List<Comentario> ?? new List<Comentario>() ;
-
-
+﻿@{
+    List<Comentario> comentarios = ViewData["COMENTARIOS"] as List<Comentario> ?? new List<Comentario>();
     Camiseta camiseta = ViewData["CAMISETA"] as Camiseta;
     List<Etiqueta> etiquetas = ViewData["ETIQUETAS"] as List<Etiqueta>;
 }
 
-<div class="container mt-4">
-    <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">Publicacion</h5>
-            @*<button class="btn btn-outline-primary">❤️</button>*@
-        </div>
-        <div class="row g-0">
-            <div class="col-md-4">
-                <img src="/jersey/@camiseta.Imagen" class="img-fluid rounded-start" alt="Camiseta de fútbol">
+<div class="container mt-5">
+    <div class="card shadow-sm border-0 rounded-3 overflow-hidden">
+        <div class="card-header bg-light d-flex justify-content-between align-items-center py-3">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a href="/" class="text-decoration-none">Inicio</a></li>
+                    <li class="breadcrumb-item"><a href="/Camisetas" class="text-decoration-none">Camisetas</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">@camiseta.Equipo @camiseta.Year</li>
+                </ol>
+            </nav>
+            <div>
+            @*
+            VERSION 2
+                <button class="btn btn-sm btn-outline-danger" title="Añadir a favoritos">
+                    <i class="bi bi-heart"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-primary ms-2" title="Compartir">
+                    <i class="bi bi-share"></i>
+                </button>*@
             </div>
-            <div class="col-md-8">
-                <div class="card-body">
-                    <h5 class="card-title">@camiseta.Equipo @camiseta.Year</h5>
-                    <p class="card-text"><strong>Equipo:</strong> @camiseta.Equipo</p>
-                    <p class="card-text"><strong>Pais:</strong>@camiseta.Pais.NombrePais</p>
-                    <p class="card-text">
-                        <strong>Marca:</strong> @camiseta.Marca
-                    </p>
-                    <p class="card-text">
-                        <strong>Equipacion:</strong> @camiseta.Equipacion
-                    </p>
-                    <p class="card-text">
-                        <strong>Condicion:</strong> @camiseta.Condicion
-                    </p>
-                    @if(camiseta.Dorsal!=null){
-                        <p class="card-text">
-                            <strong>Dorsal:</strong> @camiseta.Dorsal
-                        </p>
-                    }
-                    @if(camiseta.Jugador!=null){
-                        <p class="card-text">
-                            <strong>Jugador:</strong> @camiseta.Jugador
-                        </p>
-                    }
-                    <p class="card-text">
-                        <strong>Fecha:</strong> @camiseta.FechaSubida.ToShortDateString()
-                    </p>
-                    @* ETIQUETAS *@
-                    <p class="card-text">
-                       @if(@etiquetas!=null){
-                        @foreach (Etiqueta etiqueta in etiquetas)
-                        {
-                            <span class="badge bg-success">
-                                @etiqueta.TxtEtiqueta
-                            </span>
+        </div>
 
+       
+        <div class="row g-0">
+
+            <div class="col-md-5 position-relative">
+                <div class="position-absolute top-0 start-0 m-3">
+                    <span class="badge bg-dark text-white rounded-pill px-3 py-2">
+                        @camiseta.Year
+                    </span>
+                </div>
+                <img src="/jersey/@camiseta.Imagen" class="img-fluid h-100 object-fit-cover" alt="@camiseta.Equipo @camiseta.Year">
+            </div>
+
+            <div class="col-md-7">
+                <div class="card-body p-4">
+                    <h3 class="card-title fw-bold mb-4">@camiseta.Equipo @camiseta.Year</h3>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex align-items-center">
+                                <span class="bg-light p-2 rounded-circle me-3">
+                                    <i class="bi bi-flag-fill text-primary"></i>
+                                </span>
+                                <div>
+                                    <small class="text-muted d-block">País</small>
+                                    <span class="fw-medium">@camiseta.Pais.NombrePais</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex align-items-center">
+                                <span class="bg-light p-2 rounded-circle me-3">
+                                    <i class="bi bi-tag-fill text-primary"></i>
+                                </span>
+                                <div>
+                                    <small class="text-muted d-block">Marca</small>
+                                    <span class="fw-medium">@camiseta.Marca</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex align-items-center">
+                                <span class="bg-light p-2 rounded-circle me-3">
+                                    <i class="bi bi-tshirt text-primary"></i>
+                                </span>
+                                <div>
+                                    <small class="text-muted d-block">Equipación</small>
+                                    <span class="fw-medium">@camiseta.Equipacion</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex align-items-center">
+                                <span class="bg-light p-2 rounded-circle me-3">
+                                    <i class="bi bi-stars text-primary"></i>
+                                </span>
+                                <div>
+                                    <small class="text-muted d-block">Condición</small>
+                                    <span class="fw-medium">@camiseta.Condicion</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        @if (camiseta.Dorsal != null)
+                        {
+                            <div class="col-md-6 mb-3">
+                                <div class="d-flex align-items-center">
+                                    <span class="bg-light p-2 rounded-circle me-3">
+                                        <i class="bi bi-123 text-primary"></i>
+                                    </span>
+                                    <div>
+                                        <small class="text-muted d-block">Dorsal</small>
+                                        <span class="fw-medium">@camiseta.Dorsal</span>
+                                    </div>
+                                </div>
+                            </div>
                         }
-                       }
-                        
-                    </p>
-                    
+
+                        @if (camiseta.Jugador != null)
+                        {
+                            <div class="col-md-6 mb-3">
+                                <div class="d-flex align-items-center">
+                                    <span class="bg-light p-2 rounded-circle me-3">
+                                        <i class="bi bi-person-fill text-primary"></i>
+                                    </span>
+                                    <div>
+                                        <small class="text-muted d-block">Jugador</small>
+                                        <span class="fw-medium">@camiseta.Jugador</span>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="d-flex align-items-center mt-2 mb-4">
+                        <span class="bg-light p-2 rounded-circle me-3">
+                            <i class="bi bi-calendar-date text-primary"></i>
+                        </span>
+                        <div>
+                            <small class="text-muted">Fecha de publicación</small>
+                            <span class="d-block">@camiseta.FechaSubida.ToShortDateString()</span>
+                        </div>
+                    </div>
+
+                    <!-- Etiquetas -->
+                    @if (etiquetas != null && etiquetas.Any())
+                    {
+                        <div class="mb-4">
+                            <h6 class="text-muted mb-2">Etiquetas</h6>
+                            @foreach (Etiqueta etiqueta in etiquetas)
+                            {
+                                <a href="/Etiquetas/@etiqueta.IdEtiqueta" class="badge bg-primary text-decoration-none text-white py-2 px-3 me-2 mb-2">
+                                    #@etiqueta.TxtEtiqueta
+                                </a>
+                            }
+                        </div>
+                    }
+
                 </div>
             </div>
         </div>
-        <div class="card-footer">
-            <h6>Comentarios</h6>
-            <div class="list-group">
-                @if (comentarios != null || comentarios != null)
-                {
+
+        <!-- Sección de comentarios -->
+        <div class="card-footer bg-white p-4 border-top">
+            <h5 class="mb-4">
+                <i class="bi bi-chat-square-text me-2 text-primary"></i>
+                Comentarios <span class="badge bg-secondary rounded-pill">@(comentarios?.Count ?? 0)</span>
+            </h5>
+
+            <!-- Lista de comentarios -->
+            @if (comentarios != null && comentarios.Any())
+            {
+                <div class="list-group list-group-flush mb-4">
                     @foreach (Comentario comentario in comentarios)
                     {
-                        <div class="list-group-item d-flex align-items-start">
-                            <img src="~/avatar/@comentario.Usuario.Avatar" class="rounded-circle me-2" width="40" height="40" alt="Usuario">
-                            <div>
-                                <h6 class="mb-0">@comentario.Usuario.Alias</h6>
-                                <p class="mb-0">@comentario.ComentarioTxt</p>
+                        <div class="list-group-item border-0 border-bottom py-3 px-0">
+                            <div class="d-flex">
+                                <img src="~/avatar/@comentario.Usuario.Avatar" class="rounded-circle me-3" width="48" height="48" alt="@comentario.Usuario.Alias">
+                                <div class="flex-grow-1">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <h6 class="mb-0 fw-bold">@comentario.Usuario.Alias</h6>
+                                        <small class="text-muted">@comentario.FechaComentario.ToString("dd MMM yyyy")</small>
+                                    </div>
+                                    <p class="mb-0">@comentario.ComentarioTxt</p>
+                                </div>
                             </div>
                         </div>
                     }
-                }
-                
-                
-            </div>
-            <div class="mt-3 input-group">
-                <form method="post" asp-action="DetallesCamiseta" asp-route-idCamiseta="@camiseta.IdCamiseta">
-                    <input type="text" class="form-control" name="texto" placeholder="Añadir un comentario...">
-                    <button class="btn btn-outline-secondary">
-                        Comentar
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-light text-center py-4">
+                    <i class="bi bi-chat-square-text display-5 d-block mb-3 text-muted"></i>
+                    <p class="mb-0">No hay comentarios todavía. ¡Sé el primero en comentar!</p>
+                </div>
+            }
+
+            
+            <form method="post" asp-action="DetallesCamiseta" asp-route-idCamiseta="@camiseta.IdCamiseta" class="mt-4">
+                <div class="input-group">
+                    <input type="text" class="form-control py-2" name="texto" placeholder="Escribe un comentario..." required>
+                    <button type="submit" class="btn btn-primary px-4">
+                        <i class="bi bi-send-fill me-2"></i>Comentar
                     </button>
-                </form>
-            </div>
+                </div>
+            </form>
         </div>
     </div>
 </div>
+
+<!-- Asegúrate de tener Bootstrap Icons en el Layout -->
+@section Styles {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css">
+    <style>
+        .object-fit-cover {
+            object-fit: cover;
+        }
+    </style>
+}

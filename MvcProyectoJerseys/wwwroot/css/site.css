@@ -29,3 +29,178 @@ body {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
   text-align: start;
 }
+/* Estilos Material Design para Sport Cards */
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+}
+
+/* Navbar estilo Material Design */
+.navbar-sport {
+    background: linear-gradient(90deg, #1e88e5, #0d47a1);
+    padding: 15px 0;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.navbar-brand-custom {
+    display: flex;
+    align-items: center;
+}
+
+    .navbar-brand-custom img {
+        height: 40px;
+        margin-right: 10px;
+        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+    }
+
+    .navbar-brand-custom span {
+        font-weight: 700;
+        font-size: 1.4rem;
+        color: white;
+        letter-spacing: 0.5px;
+    }
+
+.nav-link-sport {
+    color: rgba(255,255,255,0.85) !important;
+    font-weight: 500;
+    margin: 0 5px;
+    padding: 8px 16px !important;
+    border-radius: 20px;
+    transition: all 0.3s;
+}
+
+    .nav-link-sport:hover {
+        background-color: rgba(255,255,255,0.2);
+        color: white !important;
+        transform: translateY(-2px);
+    }
+
+    .nav-link-sport.active {
+        background-color: rgba(255,255,255,0.25);
+        color: white !important;
+        font-weight: 700;
+    }
+
+.btn-auth {
+    border-radius: 20px;
+    padding: 8px 20px;
+    font-weight: 500;
+    transition: all 0.3s;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.btn-signup {
+    background-color: white;
+    color: #1e88e5;
+    border: none;
+}
+
+    .btn-signup:hover {
+        background-color: #f5f5f5;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+
+.btn-login {
+    background-color: #ff9800;
+    color: white;
+    border: none;
+}
+
+    .btn-login:hover {
+        background-color: #f57c00;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+
+.btn-create {
+    background-color: #ff5722;
+    color: white;
+    font-weight: 500;
+    border-radius: 20px;
+    padding: 8px 18px;
+    display: inline-flex;
+    align-items: center;
+    transition: all 0.3s;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+    .btn-create i {
+        margin-right: 6px;
+    }
+
+    .btn-create:hover {
+        background-color: #e64a19;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+
+/* Contenedor principal con espacio para contenido */
+.main-container {
+    min-height: calc(100vh - 180px);
+    padding: 30px 0;
+}
+
+/* Footer estilo Material Design */
+.footer-sport {
+    background-color: #1e88e5;
+    color: white;
+    padding: 20px 0;
+    text-align: center;
+}
+
+    .footer-sport a {
+        color: #ffcc80;
+        text-decoration: none;
+        transition: color 0.3s;
+    }
+
+        .footer-sport a:hover {
+            color: #ffa726;
+            text-decoration: underline;
+        }
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.social-links {
+    font-size: 1.2rem;
+}
+
+    .social-links a {
+        margin: 0 8px;
+        display: inline-block;
+    }
+
+        .social-links a:hover {
+            transform: scale(1.2);
+        }
+
+/* Soporte responsive */
+@media (max-width: 768px) {
+    .navbar-nav {
+        margin-bottom: 15px;
+    }
+
+    .nav-link-sport {
+        text-align: center;
+        margin-bottom: 5px;
+    }
+
+    .auth-buttons {
+        display: flex;
+        justify-content: center;
+        margin-top: 10px;
+    }
+
+    .footer-content {
+        flex-direction: column;
+        gap: 15px;
+    }
+}

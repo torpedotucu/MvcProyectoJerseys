@@ -72,9 +72,7 @@ namespace MvcProyectoJerseys.Controllers
             }
             else
             {
-                //HttpContext.Session.SetObject("USUARIO", user);
-                //ViewBag.INICIO=user.Equipo;
-                //return RedirectToAction("PerfilUsuario","Camisetas");
+                
                 ClaimsIdentity identity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme, ClaimTypes.Name, ClaimTypes.Role);
                 Claim claimUserName = new Claim(ClaimTypes.Name, user.UserName);
                 Claim claimIdUser = new Claim("IDUSUARIO", user.IdUsuario.ToString());

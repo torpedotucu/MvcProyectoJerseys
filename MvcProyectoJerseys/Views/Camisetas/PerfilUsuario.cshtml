@@ -4,50 +4,87 @@
     List<Usuario> amigos = ViewData["LISTAAMIGOS"] as List<Usuario>;
     int numAmigos = (int)ViewData["NUMAMIGOS"];
 }
+@section Styles{
+    <link rel="stylesheet" href="/css/PerfilUsuario.css" />
+}
+<style>
+    /* Estilos Material Design para Sport Cards */
+    
+</style>
 
-<div class="container mt-4">
+<div class="container mt-5">
+    <!-- Perfil de Usuario estilo Material Sport Card -->
+    <div class="profile-card mb-5">
+        <div class="card-overlay">
+            <div class="avatar-container mb-3">
+                <img src="~/avatar/@Model.Avatar" class="w-100 h-100 object-fit-cover" alt="Usuario">
+            </div>
 
-    <!-- Perfil de Usuario -->
-    <div class="card text-center mb-4 shadow-sm">
-        <div class="card-body">
-            <img src="~/avatar/@Model.Avatar" class="rounded-circle mb-3 border" width="120" height="120" alt="Usuario">
-            <h4 class="card-title">@Model.UserName</h4>
-            <p class="text-muted">@Model.Alias</p>
-            <p class="text-muted">@Model.Correo</p>
-            <p><strong>@Model.Equipo</strong>, @Model.Pais</p>
+            <h3 class="text-center mb-0">@Model.UserName</h3>
+            <p class="text-center text-white-50 mb-2">@Model.Alias</p>
 
-            <!-- Botón para ver amigos -->
-            <button class="btn btn-info me-2" data-bs-toggle="modal" data-bs-target="#userListModal">
-                Amigos (@numAmigos)
-            </button>
+            <div class="text-center">
+                <div class="sport-badge">
+                    <i class="fas fa-futbol me-1"></i> @Model.Equipo
+                </div>
+                <small class="d-block mt-2">
+                    <i class="fas fa-map-marker-alt me-1"></i> @Model.Pais
+                </small>
+            </div>
 
-            <!-- Botón para editar perfil -->
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editProfileModal">
-                Editar Perfil
-            </button>
+            <div class="stats-container">
+                <div class="stat-item">
+                    <h4 class="mb-0">@numAmigos</h4>
+                    <small>Amigos</small>
+                </div>
+                <div class="stat-item">
+                    <h4 class="mb-0">@(camisetas?.Count ?? 0)</h4>
+                    <small>Camisetas</small>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-center mt-3">
+                <button class="action-button me-2" data-bs-toggle="modal" data-bs-target="#editProfileModal">
+                    <i class="fas fa-user-edit me-1"></i> Editar Perfil
+                </button>
+                <button class="action-button secondary" data-bs-toggle="modal" data-bs-target="#userListModal">
+                    <i class="fas fa-users me-1"></i> Ver Amigos
+                </button>
+            </div>
         </div>
+    </div>
+
+    <!-- Botón para agregar amigo -->
+    <div class="text-center mb-4">
+        <a asp-action="BuscarAmigo" class="action-button" style="text-decoration: none;">
+            <i class="fas fa-user-plus me-1"></i> Agregar Amigo
+        </a>
     </div>
 
     <!-- Lista de amigos (Modal) -->
     @if (numAmigos > 0)
     {
         <div class="modal fade" id="userListModal" tabindex="-1" aria-labelledby="userListModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-scrollable">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Lista de Amigos</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+                <div class="modal-content" style="border-radius: 16px; overflow: hidden;">
+                    <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title">
+                            <i class="fas fa-users me-2"></i> Mis Amigos
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body">
-                        <ul class="list-group">
+                        <ul class="list-group list-group-flush friends-list">
                             @foreach (var amigo in amigos)
                             {
-                                <li class="list-group-item d-flex align-items-center">
+                                <li class="list-group-item border-0 d-flex align-items-center">
                                     <a asp-controller="Camisetas" asp-action="UsuarioPerfil" asp-route-amigoId="@amigo.IdUsuario" class="d-flex align-items-center text-decoration-none text-dark">
-                                        <img src="~/avatar/@amigo.Avatar" class="rounded-circle me-3 border" width="50" height="50" alt="@amigo.Alias">
-                                        <div>
-                                            <strong>@amigo.Alias</strong><br>
-                                            <small class="text-muted">@amigo.UserName</small>
+                                        <div style="width: 60px; height: 60px; border-radius: 50%; overflow: hidden; border: 3px solid #1e88e5;">
+                                            <img src="~/avatar/@amigo.Avatar" class="w-100 h-100 object-fit-cover" alt="@amigo.Alias">
+                                        </div>
+                                        <div class="ms-3">
+                                            <strong style="font-size: 18px;">@amigo.Alias</strong>
+                                            <p class="text-muted mb-0">@amigo.UserName</p>
                                         </div>
                                     </a>
                                 </li>
@@ -59,39 +96,38 @@
         </div>
     }
 
-    <!-- Botón para agregar amigo -->
-    <div class="text-center mb-4">
-        <a asp-action="BuscarAmigo" class="btn btn-dark">Agregar amigo</a>
-    </div>
-
     <!-- Modal para Editar Perfil -->
     <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Editar Perfil</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="border-radius: 16px; overflow: hidden;">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-user-edit me-2"></i> Editar Perfil
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <form method="post" enctype="multipart/form-data">
                         @Html.AntiForgeryToken()
                         <div class="mb-3">
-                            <label class="form-label">Alias</label>
-                            <input type="text" class="form-control" name="alias" value="@Model.Alias">
+                            <label class="form-label fw-bold">Alias</label>
+                            <input type="text" class="form-control rounded-pill" name="alias" value="@Model.Alias">
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Contraseña</label>
-                            <input type="password" class="form-control" name="contrasena">
+                            <label class="form-label fw-bold">Contraseña</label>
+                            <input type="password" class="form-control rounded-pill" name="contrasena">
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Equipo</label>
-                            <input type="text" class="form-control" name="equipo" value="@Model.Equipo">
+                            <label class="form-label fw-bold">Equipo</label>
+                            <input type="text" class="form-control rounded-pill" name="equipo" value="@Model.Equipo">
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Avatar</label>
-                            <input name="avatar" type="file" class="form-control" accept="image/*">
+                            <label class="form-label fw-bold">Avatar</label>
+                            <input name="avatar" type="file" class="form-control rounded-pill" accept="image/*">
                         </div>
-                        <button type="submit" class="btn btn-primary w-100">Guardar Cambios</button>
+                        <button type="submit" class="action-button w-100 mt-3">
+                            <i class="fas fa-save me-1"></i> Guardar Cambios
+                        </button>
                     </form>
                 </div>
             </div>
@@ -101,25 +137,32 @@
     <!-- Camisetas del Usuario -->
     @if (camisetas != null && camisetas.Any())
     {
-        <h4 class="text-center mt-4">Mis Camisetas</h4>
-        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
+        <h4 class="section-title text-center">Mi Colección de Camisetas</h4>
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4 mb-5">
             @foreach (var camiseta in camisetas)
             {
                 <div class="col">
-                    <div class="card shadow-sm border-warning">
-                        <img src="~/jersey/@camiseta.Imagen" class="card-img-top" style="height: 220px; object-fit: cover;" alt="Camiseta">
+                    <div class="jersey-card">
+                        <div class="position-relative">
+                            <img src="~/jersey/@camiseta.Imagen" class="card-img-top" alt="Camiseta">
+                        </div>
                         <div class="card-body">
                             @if (!string.IsNullOrEmpty(camiseta.Descripcion))
                             {
-                                <p class="card-text">@camiseta.Descripcion</p>
+                                <p class="card-text mb-3">@camiseta.Descripcion</p>
                             }
                             <div class="d-flex justify-content-between align-items-center">
                                 <div class="btn-group">
-                                    <a class="btn btn-sm btn-outline-primary" asp-controller="Camisetas" asp-action="DetallesCamiseta" asp-route-idCamiseta="@camiseta.IdCamiseta">Ver</a>
-                                    <a class="btn btn-sm btn-outline-secondary" asp-controller="Camisetas" asp-action="UpdateCamiseta" asp-route-idCamiseta="@camiseta.IdCamiseta">Editar</a>
-                                    <a class="btn btn-sm btn-outline-danger" asp-controller="Camisetas" asp-action="DeleteCamiseta" asp-route-idCamiseta="@camiseta.IdCamiseta">Eliminar</a>
+                                    <a class="btn btn-sm btn-primary" asp-controller="Camisetas" asp-action="DetallesCamiseta" asp-route-idCamiseta="@camiseta.IdCamiseta">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a class="btn btn-sm btn-info text-white" asp-controller="Camisetas" asp-action="UpdateCamiseta" asp-route-idCamiseta="@camiseta.IdCamiseta">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a class="btn btn-sm btn-danger" asp-controller="Camisetas" asp-action="DeleteCamiseta" asp-route-idCamiseta="@camiseta.IdCamiseta">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
                                 </div>
-                                <small class="text-muted">@camiseta.FechaSubida.ToString("dd/MM/yyyy")</small>
                             </div>
                         </div>
                     </div>
@@ -127,4 +170,19 @@
             }
         </div>
     }
+    else
+    {
+        <div class="text-center mt-5 mb-5 p-5 bg-light rounded-3">
+            <h4 class="text-muted">No tienes camisetas en tu colección</h4>
+            <p>¿Por qué no agregas tu primera camiseta?</p>
+            <a class="action-button" href="#">
+                <i class="fas fa-plus me-1"></i> Agregar Camiseta
+            </a>
+        </div>
+    }
 </div>
+
+<!-- Asegurate de incluir FontAwesome para los iconos -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<!-- Incluye Google Font Roboto para un estilo Material Design -->
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">

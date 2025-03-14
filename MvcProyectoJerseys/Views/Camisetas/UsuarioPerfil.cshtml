@@ -1,91 +1,270 @@
-﻿
-@{
+﻿@{
     List<Camiseta> camisetas = ViewData["CAMISETAS"] as List<Camiseta>;
     List<Usuario> amigos = ViewData["LISTAAMIGOS"] as List<Usuario>;
     int numAmigos = (int)ViewData["NUMAMIGOS"];
-    Usuario user =(Usuario) ViewData["USUARIO"];
+    Usuario user = (Usuario)ViewData["USUARIO"];
 }
 
+<style>
+    /* Estilos generales SportCard */
+    body {
+        background-color: #f5f5f5;
+    }
 
-<div class="container mt-4">
-    <!-- Perfil de Usuario -->
-    <div class="card mb-4">
-        <div class="card-body text-center">
-            <img src="~/avatar/@user.Avatar" class="rounded-circle mb-3" width="100" height="100" alt="Usuario">
-            <h5 class="card-title">@user.UserName</h5>
-            <p class="card-text">
-                @user.Alias
-            </p>
-            <p class="card-text">
-               CODIGO AMISTAD: @user.CodeAmistad
-            </p>
-            <p class="card-text">@user.Equipo, @user.Pais</p>
-            <p class="btn btn-info" data-bs-toggle="modal" data-bs-target="#userListModal">@numAmigos</p>
+    .sport-gradient {
+        background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+    }
 
+    .sport-card {
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        border: none;
+    }
+
+    .profile-header {
+        padding: 20px;
+        position: relative;
+    }
+
+    .profile-avatar {
+        width: 120px;
+        height: 120px;
+        border: 4px solid white;
+        object-fit: cover;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    .profile-stats {
+        background-color: rgba(255,255,255,0.1);
+        border-radius: 12px;
+        padding: 10px 15px;
+        margin: 5px;
+        color: white;
+        font-weight: bold;
+        backdrop-filter: blur(5px);
+        transition: transform 0.2s;
+    }
+
+        .profile-stats:hover {
+            transform: translateY(-5px);
+            cursor: pointer;
+        }
+
+    .team-badge {
+        background-color: #ffc107;
+        color: #000;
+        font-weight: bold;
+        padding: 5px 15px;
+        border-radius: 20px;
+        display: inline-block;
+        margin-top: 10px;
+    }
+
+    .friend-code {
+        background-color: #28a745;
+        color: white;
+        font-weight: bold;
+        padding: 5px 15px;
+        border-radius: 20px;
+        display: inline-block;
+        margin-top: 10px;
+    }
+
+    /* Estilos de camisetas */
+    .jersey-card {
+        border-radius: 12px;
+        overflow: hidden;
+        transition: transform 0.3s;
+        border: none;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+        .jersey-card:hover {
+            transform: translateY(-10px);
+        }
+
+    .jersey-img {
+        height: 250px;
+        object-fit: cover;
+        transition: transform 0.5s ease-in-out, object-fit 0.3s ease-in-out;
+        border-bottom: 3px solid #ffc107;
+    }
+
+        .jersey-img:hover {
+            transform: scale(1.1);
+            object-fit: contain;
+        }
+
+    .jersey-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 15px;
+        background-color: #f8f9fa;
+    }
+
+    .view-btn {
+        background-color: #1a2a6c;
+        color: white;
+        border-radius: 20px;
+        padding: 5px 15px;
+        border: none;
+        transition: background-color 0.3s;
+    }
+
+        .view-btn:hover {
+            background-color: #0d1848;
+            color: white;
+        }
+
+    /* Estilos del modal de amigos */
+    .friends-modal .modal-content {
+        border-radius: 15px;
+        border: none;
+    }
+
+    .friends-modal .modal-header {
+        background: linear-gradient(135deg, #1a2a6c, #b21f1f);
+        color: white;
+        border-bottom: none;
+        border-radius: 15px 15px 0 0;
+    }
+
+    .friend-item {
+        border-radius: 10px;
+        margin-bottom: 10px;
+        transition: transform 0.2s;
+        border: 1px solid #eee;
+    }
+
+        .friend-item:hover {
+            transform: translateX(5px);
+            background-color: #f8f9fa;
+        }
+
+    .friend-avatar {
+        border: 2px solid #1a2a6c;
+    }
+
+    .collection-title {
+        color: #1a2a6c;
+        font-weight: bold;
+        font-size: 24px;
+        text-transform: uppercase;
+        margin: 30px 0 20px;
+        padding-bottom: 10px;
+        border-bottom: 3px solid #ffc107;
+        display: inline-block;
+    }
+</style>
+
+<div class="container mt-5">
+    <!-- Perfil de Usuario con estilo SportCard -->
+    <div class="card sport-card mb-5">
+        <div class="sport-gradient profile-header text-center text-white py-4">
+            <div class="position-relative mb-4">
+                <img src="~/avatar/@user.Avatar" class="profile-avatar rounded-circle mx-auto d-block" alt="Usuario">
+            </div>
+            <h3 class="fw-bold">@user.UserName</h3>
+            <p class="fs-5 text-white-50">@user.Alias</p>
+            <div class="team-badge mb-2">
+                <i class="bi bi-trophy-fill me-1"></i> @user.Equipo
+            </div>
+            <p class="mb-1 mt-3"><i class="bi bi-geo-alt-fill me-1"></i> @user.Pais</p>
+            <div class="friend-code mt-2">
+                <i class="bi bi-person-plus-fill me-1"></i> CÓDIGO: @user.CodeAmistad
+            </div>
+
+            <div class="d-flex justify-content-center mt-4">
+                <div class="profile-stats" data-bs-toggle="modal" data-bs-target="#userListModal">
+                    <div class="fs-3">@numAmigos</div>
+                    <div class="small">Amigos</div>
+                </div>
+                <div class="profile-stats">
+                    <div class="fs-3">@(camisetas?.Count ?? 0)</div>
+                    <div class="small">Camisetas</div>
+                </div>
+            </div>
         </div>
     </div>
+
     @if (numAmigos > 0)
     {
-        <div class="modal fade" id="userListModal" tabindex="-1" aria-labelledby="userListModalLabel" aria-hidden="true">
+        <div class="modal fade friends-modal" id="userListModal" tabindex="-1" aria-labelledby="userListModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-scrollable">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="userListModalLabel">Lista de Usuarios</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <h5 class="modal-title" id="userListModalLabel">
+                            <i class="bi bi-people-fill me-2"></i>Amigos del Equipo
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="modal-body">
-                        <ul class="list-group">
+                    <div class="modal-body p-3">
+                        <div class="list-group">
                             @foreach (Usuario amigo in amigos)
                             {
-                                <li class="list-group-item d-flex align-items-center">
-                                    <a asp-controller="Camisetas" asp-action="UsuarioPerfil" asp-route-amigoId="@amigo.IdUsuario">
-                                    <!-- Imagen de perfil -->
-                                    <img src="~/avatar/@amigo.Avatar" class="rounded-circle me-3" width="50" height="50" alt="Foto de @amigo.Alias">
-
-                                    <!-- Alias y Username -->
+                                <a asp-controller="Camisetas" asp-action="UsuarioPerfil" asp-route-amigoId="@amigo.IdUsuario"
+                                   class="list-group-item list-group-item-action friend-item d-flex align-items-center p-3">
+                                    <img src="~/avatar/@amigo.Avatar" class="friend-avatar rounded-circle me-3" width="50" height="50" alt="Foto de @amigo.Alias">
                                     <div>
-                                        <strong>@amigo.Alias</strong><br>
+                                        <strong class="d-block">@amigo.Alias</strong>
                                         <small class="text-muted">@amigo.UserName</small>
                                     </div>
-                                    </a>
-                                </li>
+                                </a>
                             }
-                        </ul>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-
     }
-    
-    @if (camisetas != null)
+
+    @if (camisetas != null && camisetas.Count > 0)
     {
-        <!-- Camisetas del Usuario -->
-        <div class="album py-5 bg-body-tertiary">
-            <div class="container">
-                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-                    @foreach (Camiseta camiseta in camisetas)
-                    {
-                        <div class="col">
-                            <div class="card shadow-sm border-warning">
-                                <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><img src="~/jersey/@camiseta.Imagen" alt="Alternate Text" /></svg>
-                                <div class="card-body">
-                                    @if (camiseta.Descripcion != null)
-                                    {
-                                        <p class="card-text">@camiseta.Descripcion</p>
-                                    }
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div class="btn-group">
-                                            <a class="btn btn-sm btn-outline-primary" asp-controller="Camisetas" asp-action="DetallesCamiseta" asp-route-idCamiseta="@camiseta.IdCamiseta">View</a>
-                                        </div>
-                                        <small class="text-body-secondary">@camiseta.FechaSubida.Date</small>
-                                    </div>
-                                </div>
-                            </div>
+        <!-- Colección de Camisetas -->
+        <h4 class="collection-title">
+            <i class="bi bi-collection-fill me-2"></i>Mi Colección
+        </h4>
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4 mb-5">
+            @foreach (Camiseta camiseta in camisetas)
+            {
+                <div class="col">
+                    <div class="card jersey-card h-100">
+                        <div class="overflow-hidden">
+                            <img src="~/jersey/@camiseta.Imagen" class="jersey-img card-img-top" alt="Camiseta de @user.UserName">
                         </div>
-                    }
+                        <div class="card-body">
+                            @if (!string.IsNullOrEmpty(camiseta.Descripcion))
+                            {
+                                <p class="card-text">@camiseta.Descripcion</p>
+                            }
+                            else
+                            {
+                                <p class="card-text text-muted">Camiseta de colección</p>
+                            }
+                        </div>
+                        <div class="jersey-footer">
+                            <a class="btn view-btn" asp-controller="Camisetas" asp-action="DetallesCamiseta" asp-route-idCamiseta="@camiseta.IdCamiseta">
+                                <i class="bi bi-eye-fill"></i> Ver detalles
+                            </a>
+                            <small class="text-muted">
+                                <i class="bi bi-calendar3"></i> @camiseta.FechaSubida.ToString("dd/MM/yyyy")
+                            </small>
+                        </div>
+                    </div>
                 </div>
-            </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="text-center py-5">
+            <i class="bi bi-collection text-muted" style="font-size: 3rem;"></i>
+            <h5 class="mt-3 text-muted">No hay camisetas en la colección</h5>
         </div>
     }
 </div>
+
+<!-- Agregar Bootstrap Icons -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">

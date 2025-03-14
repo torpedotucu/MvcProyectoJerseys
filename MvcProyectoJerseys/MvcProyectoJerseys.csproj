@@ -18,6 +18,7 @@
   <ItemGroup>
     <Folder Include="wwwroot\jersey\" />
     <Folder Include="wwwroot\avatar\" />
+    <Folder Include="wwwroot\lib\bootstrap-icons\" />
     <Folder Include="wwwroot\temp\" />
     <Folder Include="wwwroot\uploads\" />
   </ItemGroup>

@@ -45,18 +45,20 @@ namespace MvcProyectoJerseys.Controllers
         
         [AuthorizeUsers]
         [HttpPost]
-        public async Task<IActionResult> PerfilUsuario(string alias, string equipo, IFormFile avatar, string contrasena)
+        public async Task<IActionResult> PerfilUsuario(string alias, string equipo, IFormFile avatar, string? contrasena)
         {
-            Console.Write(alias+equipo+avatar.FileName+contrasena);
+            
             int idUsuario = int.Parse(HttpContext.User.FindFirst("IDUSUARIO").Value);
-            await this.repo.EditarPerfil(idUsuario, alias, avatar, equipo, contrasena);    
-            ViewData["USUARIO"] = this.repo.GetUsuarioLibre(idUsuario);
+            await this.repo.EditarPerfil(idUsuario, alias, avatar, equipo, contrasena);
+            Usuario user = await this.repo.GetUsuarioLibre(idUsuario);
+            ViewData["USUARIO"] =user;
             ViewData["NUMAMIGOS"]=await this.repo.GetNumberAmigosAsync(idUsuario);
             ViewData["LISTAAMIGOS"]=await this.repo.GetListaAmigosAsync(idUsuario);
             
             List<Camiseta> camisetas = await this.repo.GetCamisetasUsuario(idUsuario);
             ViewData["CAMISETAS"] = camisetas;
-            return View();
+            
+            return View(user);
         }
         //public async Task<IActionResult> DetalleCamiseta(int idCamiseta)
         //{
