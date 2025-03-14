@@ -39,7 +39,7 @@ namespace MvcProyectoJerseys.Models
 
         [Column("Es_Activa")]
         public int EsActiva { get; set; }
-
+        
         [Column("IdUsuario")]
         public int IdUsuario { get; set; }
 
@@ -54,6 +54,8 @@ namespace MvcProyectoJerseys.Models
         public List<Comentario> Comentarios { get; set; }
 
         [ForeignKey("CodigoPais")]
-        public Pais Pais { get; set; }
+        public virtual Pais Pais { get; set; }
+        [ForeignKey("IdUsuario")]
+        public virtual Usuario Usuario { get; set; }
     }
 }

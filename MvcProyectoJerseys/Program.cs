@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MvcProyectoJerseys.Data;
 using MvcProyectoJerseys.Helpers;
@@ -8,7 +9,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddAntiforgery();
-builder.Services.AddControllersWithViews();
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession();
 builder.Services.AddHttpContextAccessor();
@@ -18,8 +18,8 @@ builder.Services.AddTransient<RepositoryCamisetas>();
 builder.Services.AddDbContext<CamisetasContext>(options => options.UseSqlServer(connectionString));
 builder.Services.AddSingleton<HelperPathProvider>();
 
-builder.Services.AddDistributedMemoryCache();
-builder.Services.AddSession();
+
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultSignInScheme=CookieAuthenticationDefaults.AuthenticationScheme;
@@ -41,7 +41,7 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 //app.UseRouting();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 //app.MapStaticAssets();

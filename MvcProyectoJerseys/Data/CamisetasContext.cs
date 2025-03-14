@@ -20,6 +20,7 @@ namespace MvcProyectoJerseys.Data
         public DbSet<Amistad> Amistades { get; set; }
 
         public DbSet<Etiqueta> Etiquetas { get; set; }
+        //public DbSet<EtiquetaCamiseta> EtiquetaCamisetas { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

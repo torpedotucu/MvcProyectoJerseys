@@ -92,10 +92,69 @@ namespace MvcProyectoJerseys.Repositories
             return camiseta.IdCamiseta;
         }
 
-        public void ModificarCamiseta(Camiseta camiseta)
+        public async Task ModificarCamiseta( int idCamiseta,  int? year, string? marca, string? descripcion, string? condicion, int? dorsal, string? jugador, IFormFile? imagen,int idUsuario)
         {
-            this.context.Camisetas.Update(camiseta);
-            this.context.SaveChanges();
+            Camiseta cam = await this.GetCamiseta(idCamiseta);
+
+            if (cam == null)
+            {
+                throw new Exception("Camiseta no encontrada.");
+            }
+
+            bool cambios = false;
+
+
+            if (year.HasValue && cam.Year != year.Value)
+            {
+                cam.Year = year.Value;
+                cambios = true;
+            }
+
+            if (!string.IsNullOrEmpty(marca) && cam.Marca != marca)
+            {
+                cam.Marca = marca;
+                cambios = true;
+            }
+
+
+            if (!string.IsNullOrEmpty(descripcion) && cam.Descripcion != descripcion)
+            {
+                cam.Descripcion = descripcion;
+                cambios = true;
+            }
+
+            if (!string.IsNullOrEmpty(condicion) && cam.Condicion != condicion)
+            {
+                cam.Condicion = condicion;
+                cambios = true;
+            }
+
+            if (dorsal.HasValue && cam.Dorsal != dorsal.Value)
+            {
+                cam.Dorsal = dorsal.Value;
+                cambios = true;
+            }
+
+            if (!string.IsNullOrEmpty(jugador) && cam.Jugador != jugador)
+            {
+                cam.Jugador = jugador;
+                cambios = true;
+            }
+
+            if (imagen!=null && !string.IsNullOrEmpty(imagen.FileName)&& cam.Imagen != imagen.FileName)
+            {
+                string filename = this.GenerateUniqueFileName(idUsuario, imagen);
+                cam.Imagen=filename;
+                await this.SubirFichero(imagen, Folders.Jerseys, filename);
+                cambios=true;
+            }
+
+            // Guardar cambios solo si hubo modificaciones
+            if (cambios)
+            {
+                this.context.Camisetas.Update(cam);
+                await this.context.SaveChangesAsync();
+            }
         }
 
 
@@ -358,6 +417,24 @@ namespace MvcProyectoJerseys.Repositories
             string extension = Path.GetExtension(archivo.FileName);
             string nombreUnico = $"{idUser}_{timeStamp}{extension}";
             return nombreUnico;
+        }
+
+        public async Task<List<Camiseta>> GetPublicacionesInicio(int idUsuario) {
+            var sql = "SP_GET_INICIO @idUsuario";
+            SqlParameter paramUsuario = new SqlParameter("@idUsuario", idUsuario);
+            List<Camiseta> consulta = await this.context.Camisetas.FromSqlRaw(sql, paramUsuario).ToListAsync();
+            foreach (var camiseta in consulta)
+            {
+                camiseta.Usuario = await this.context.Usuarios.FirstOrDefaultAsync(u => u.IdUsuario == camiseta.IdUsuario);
+            }
+            return consulta;
+        }
+
+        public async Task DeleteCamiseta(int idCamiseta)
+        {
+            Camiseta cam = await this.context.Camisetas.Where(c => c.IdCamiseta==idCamiseta).FirstOrDefaultAsync();
+            this.context.Remove(cam);
+            await this.context.SaveChangesAsync();
         }
         
 

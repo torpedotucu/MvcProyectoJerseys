@@ -1,85 +1,115 @@
-﻿@model MvcProyectoJerseys.Models.Camiseta
-
+﻿@model Camiseta
 @{
-    ViewData["Title"] = "UpdateCamiseta";
+    List<Pais> paises = ViewBag.Paises;
+   
 }
+<section class="contain">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5 col-xxl-4">
+                <div class="card border border-light-subtle rounded-4">
+                    <div class="card-body p-3 p-md-4 p-xl-5">
+                        <div class="text-center mb-3">
+                            <img src="~/images/JerseyHub1.png" width="175" height="70" />
+                        </div>
+                        <form id="camisetaForm" asp-action="UpdateCamiseta" method="post" enctype="multipart/form-data">
+                            @Html.AntiForgeryToken()
+                            <input name="idCamiseta" type="hidden"value="@Model.IdCamiseta" />
+                            <div class="mb-3">
+                                <label class="form-label">Equipo</label>
+                                <input name="equipo" type="text" class="form-control" value="@Model.Equipo" >
+                            </div>
 
-<h1>Modificar Camiseta</h1>
+                            <div class="mb-3">
+                                <label class="form-label">Año</label>
+                                <input name="year" type="number" class="form-control" value="@Model.Year">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Marca</label>
+                                <input name="marca" type="text" class="form-control" value="@Model.Marca">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Equipación</label>
+                                <select class="form-select" name="equipacion" >
+                                    <option value="Local">Local</option>
+                                    <option value="Visitante">Visitante</option>
+                                    <option value="Tercera">Tercera Equipación</option>
+                                    <option value="Entrenamiento">Entrenamiento</option>
+                                    <option value="Otros">Otros</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Condición</label>
+                                <input name="condicion" type="text" class="form-control" value="@Model.Condicion">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Dorsal</label>
+                                <input name="dorsal" type="number" class="form-control" value="@Model.Dorsal">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Jugador</label>
+                                <input name="jugador" type="text" class="form-control" value="@Model.Jugador">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Imagen Principal</label>
+                                <input name="imagenCamiseta" type="file" class="form-control" accept="image/*">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Descripción</label>
+                                <textarea maxlength="255" class="form-control" name="descripcion" value="@Model.Descripcion"></textarea>
+                            </div>
+                            @* <div class="mb-3"> *@
+                            @*     <label class="form-label">Etiquetas</label> *@
+                            @*     <input type="text" id="tagInput" class="form-control" placeholder="Etiquetas" /> *@
+                            @* </div> *@
+                            @* <div id="tagsContainer" class="mt-3" value="@ViewData["ETIQUETAS"]"> *@
+                                
+                            @* </div> *@
+                            @* <input type="hidden" name="etiquetas" id="hiddenTags" value="@ViewData["ETIQUETAS"]"> *@
 
-<h4>Camiseta</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="UpdateCamiseta">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="IdCamiseta" class="control-label"></label>
-                <input asp-for="IdCamiseta" class="form-control" />
-                <span asp-validation-for="IdCamiseta" class="text-danger"></span>
+                            <button type="submit" class="btn btn-success">Subir Camiseta</button>
+                        </form>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="Equipo" class="control-label"></label>
-                <input asp-for="Equipo" class="form-control" />
-                <span asp-validation-for="Equipo" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CodigoPais" class="control-label"></label>
-                <input asp-for="CodigoPais" class="form-control" />
-                <span asp-validation-for="CodigoPais" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Year" class="control-label"></label>
-                <input asp-for="Year" class="form-control" />
-                <span asp-validation-for="Year" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Marca" class="control-label"></label>
-                <input asp-for="Marca" class="form-control" />
-                <span asp-validation-for="Marca" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Equipacion" class="control-label"></label>
-                <input asp-for="Equipacion" class="form-control" />
-                <span asp-validation-for="Equipacion" class="text-danger"></span>
-            </div>
-            
-            <div class="form-group">
-                <label asp-for="Condicion" class="control-label"></label>
-                <input asp-for="Condicion" class="form-control" />
-                <span asp-validation-for="Condicion" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Dorsal" class="control-label"></label>
-                <input asp-for="Dorsal" class="form-control" />
-                <span asp-validation-for="Dorsal" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Jugador" class="control-label"></label>
-                <input asp-for="Jugador" class="form-control" />
-                <span asp-validation-for="Jugador" class="text-danger"></span>
-            </div>
-            
-            <div class="form-group">
-                <label asp-for="Descripcion" class="control-label"></label>
-                <input asp-for="Descripcion" class="form-control" />
-                <span asp-validation-for="Descripcion" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Imagen" class="control-label"></label>
-                <input asp-for="Imagen" class="form-control" />
-                <span asp-validation-for="Imagen" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
-</div>
+</section>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const tagInput = document.getElementById("tagInput");
+        const tagsContainer = document.getElementById("tagsContainer");
+        const hiddenTags = document.getElementById("hiddenTags");
 
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+        let tags = [];
+
+        tagInput.addEventListener("keypress", function (event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                let tagText = tagInput.value.trim();
+                if (tagText !== "" && !tags.includes(tagText)) {
+                    tags.push(tagText);
+                    updateTags();
+                }
+                tagInput.value = "";
+            }
+        });
+
+        function updateTags() {
+            tagsContainer.innerHTML = "";
+            tags.forEach(tag => {
+                let tagElement = document.createElement("span");
+                tagElement.classList.add("tag");
+                tagElement.innerHTML = `${tag} <span class="remove-tag">×</span>`;
+                tagElement.querySelector(".remove-tag").addEventListener("click", function () {
+                    tags = tags.filter(t => t !== tag);
+                    updateTags();
+                });
+                tagsContainer.appendChild(tagElement);
+            });
+
+            hiddenTags.value = tags.join(",");
+        }
+    });
+</script>

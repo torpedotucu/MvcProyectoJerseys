@@ -1,0 +1,31 @@
+﻿@if (Context.User.Identity.IsAuthenticated == false)
+{
+    <li class="nav-item">
+        <a class="nav-link text-info"
+           asp-controller="Camisetas"
+           asp-action="PerfilUsuario">
+            Log In
+        </a>
+    </li>
+}
+else
+{
+    <li class="nav-item">
+        <a class="nav-link text-danger"
+           asp-controller="Usuarios"
+           asp-action="Logout">
+            Log out
+            <span style="color:blue">
+                @Context.User.Identity.Name
+            </span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-dark"
+           asp-controller="Usuarios"
+           asp-action="PerfilUsuario">
+            Mi perfil
+        </a>
+    </li>
+}
+

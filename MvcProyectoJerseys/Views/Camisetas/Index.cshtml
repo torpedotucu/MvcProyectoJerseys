@@ -1,0 +1,40 @@
+﻿@model List<Camiseta>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <!-- Iterar sobre las camisetas con foreach -->
+            @foreach (var camiseta in Model)
+            {
+                <div class="card mb-4">
+                    <div class="card-header d-flex align-items-center">
+                        <!-- Mostrar el avatar del usuario -->
+                        <a asp-action="UsuarioPerfil" asp-route-idAmigo="@camiseta.IdUsuario">
+                            <img src="~/avatar/@camiseta.Usuario.Avatar" class="rounded-circle me-2" width="40" height="40" alt="Avatar">
+                        </a>
+                        <div>
+                            <strong>@camiseta.Usuario.Alias</strong> <br>
+                            <small class="text-muted">@camiseta.Usuario.Alias</small> <!-- Suponiendo que tienes un nombre en el usuario -->
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <!-- Imagen de la camiseta -->
+                        <a asp-action="DetallesCamiseta" asp-controller="Camisetas" asp-route-idCamiseta="@camiseta.IdCamiseta">
+                            <img src="~/jersey/@camiseta.Imagen" class="img-fluid rounded mb-2" alt="Camiseta de fútbol">
+                            <p><strong>Equipo:</strong> @camiseta.Equipo (@camiseta.Year)</p>
+                            <p><strong>Marca:</strong> @camiseta.Marca</p>
+                            <p><strong>Condición:</strong> @camiseta.Condicion</p>
+                        </a>
+                    </div>
+                </div>
+            }
+        </div>
+
+    </div>
+</div>

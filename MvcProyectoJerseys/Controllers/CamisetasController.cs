@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
 using MvcProyectoJerseys.Extensions;
+using MvcProyectoJerseys.Filters;
 using MvcProyectoJerseys.Helpers;
 using MvcProyectoJerseys.Models;
 using MvcProyectoJerseys.Repositories;
 using System.ComponentModel;
+using System.Threading.Tasks;
 
 namespace MvcProyectoJerseys.Controllers
 {
@@ -17,15 +19,21 @@ namespace MvcProyectoJerseys.Controllers
             this.repo = repo;
             this.helper=helper;
         }
-        public IActionResult Index()
+        [AuthorizeUsers]
+        public async Task<IActionResult> Index()
         {
-            return View();
+            Usuario usuario = HttpContext.Session.GetObject<Usuario>("USUARIO");
+            int idUsuario = int.Parse(HttpContext.User.FindFirst("IDUSUARIO").Value);
+            List<Camiseta> camisetas = await this.repo.GetPublicacionesInicio(idUsuario);
+            return View(camisetas);
         }
-
+        [AuthorizeUsers]
         public async Task<IActionResult> PerfilUsuario()
-        {   
-            Usuario usuario=HttpContext.Session.GetObject<Usuario>("USUARIO");
-            
+        {
+            //Usuario usuario=HttpContext.Session.GetObject<Usuario>("USUARIO");
+            int dato =int.Parse( HttpContext.User.FindFirst("IDUSUARIO").Value);
+            Console.Write(dato);
+            Usuario usuario =await this.repo.GetUsuarioLibre(dato);
             ViewData["USUARIO"] = usuario;
             ViewData["NUMAMIGOS"]=await this.repo.GetNumberAmigosAsync(usuario.IdUsuario);
             ViewData["LISTAAMIGOS"]=await this.repo.GetListaAmigosAsync(usuario.IdUsuario);
@@ -34,17 +42,19 @@ namespace MvcProyectoJerseys.Controllers
             ViewData["CAMISETAS"] = camisetas;
             return View(usuario);
         }
+        
+        [AuthorizeUsers]
         [HttpPost]
         public async Task<IActionResult> PerfilUsuario(string alias, string equipo, IFormFile avatar, string contrasena)
         {
             Console.Write(alias+equipo+avatar.FileName+contrasena);
-            Usuario usuario = HttpContext.Session.GetObject<Usuario>("USUARIO");
-            await this.repo.EditarPerfil(usuario.IdUsuario, alias, avatar, equipo, contrasena);    
-            ViewData["USUARIO"] = usuario;
-            ViewData["NUMAMIGOS"]=await this.repo.GetNumberAmigosAsync(usuario.IdUsuario);
-            ViewData["LISTAAMIGOS"]=await this.repo.GetListaAmigosAsync(usuario.IdUsuario);
-            Console.WriteLine(usuario.UserName);
-            List<Camiseta> camisetas = await this.repo.GetCamisetasUsuario(usuario.IdUsuario);
+            int idUsuario = int.Parse(HttpContext.User.FindFirst("IDUSUARIO").Value);
+            await this.repo.EditarPerfil(idUsuario, alias, avatar, equipo, contrasena);    
+            ViewData["USUARIO"] = this.repo.GetUsuarioLibre(idUsuario);
+            ViewData["NUMAMIGOS"]=await this.repo.GetNumberAmigosAsync(idUsuario);
+            ViewData["LISTAAMIGOS"]=await this.repo.GetListaAmigosAsync(idUsuario);
+            
+            List<Camiseta> camisetas = await this.repo.GetCamisetasUsuario(idUsuario);
             ViewData["CAMISETAS"] = camisetas;
             return View();
         }
@@ -55,6 +65,7 @@ namespace MvcProyectoJerseys.Controllers
         //    ViewData["ETIQUETAS"]=etiquetas;
         //    return View(camiseta);
         //}
+        [AuthorizeUsers]
         public async Task<IActionResult> DetallesCamiseta(int idCamiseta)
         {
             Console.WriteLine(idCamiseta);
@@ -71,7 +82,7 @@ namespace MvcProyectoJerseys.Controllers
             return View();
 
         }
-
+        [AuthorizeUsers]
         [ValidateAntiForgeryToken]
         [HttpPost]
         public async Task<IActionResult>DetallesCamiseta(int idCamiseta, string texto)
@@ -88,42 +99,39 @@ namespace MvcProyectoJerseys.Controllers
             comentario.ComentarioTxt=texto;
             comentario.FechaComentario=DateTime.Now;
             comentario.CamisetaId=idCamiseta;
-            comentario.UsuarioId=this.HttpContext.Session.GetObject<Usuario>("USUARIO").IdUsuario;
+            comentario.UsuarioId=int.Parse(HttpContext.User.FindFirst("IDUSUARIO").Value);
 
             await this.repo.Comentar(comentario);
             return RedirectToAction("DetallesCamiseta", new { idCamiseta });
         }
         public async Task<IActionResult>UpdateCamiseta(int idCamiseta)
         {
-
-            return View();
+            Camiseta cam = await this.repo.GetCamiseta(idCamiseta);
+            
+            List<Pais> paises = await this.repo.GetPaisesAsync();
+            ViewBag.Paises=paises;
+            List<Etiqueta> etiquetas = await this.repo.GetEtiquetas(idCamiseta);
+            string[] etiquetasArray = etiquetas.Select(e => e.TxtEtiqueta).ToArray();
+            ViewData["ETIQUETAS"]=string.Join(",",etiquetasArray);
+            return View(cam);
         }
+        [AuthorizeUsers]
+        [ValidateAntiForgeryToken]
         [HttpPost]
-        public async Task<IActionResult> UpdateCamiseta(int idCamiseta, string equipo, string pais, int year, string marca, string equipacion, string descripcion, string condicion, int dorsal, string jugador, string imagen)
+        public async Task<IActionResult> UpdateCamiseta(int idCamiseta, string? equipo, string? pais, int? year, string? marca, string? equipacion, string? descripcion, string? condicion, int? dorsal, string?jugador, IFormFile? imagen)
         {
-            Camiseta camiseta = await this.repo.GetCamiseta(idCamiseta);
-            camiseta.Equipo = equipo;
-            camiseta.CodigoPais = pais;
-            camiseta.Year = year;
-            camiseta.Marca = marca;
-            camiseta.Equipacion = equipacion;
-            camiseta.Descripcion = descripcion;
-            
-            camiseta.Condicion = condicion;
-            camiseta.Dorsal = dorsal;
-            camiseta.Jugador = jugador;
-            
-            camiseta.FechaSubida = DateTime.Now;
-            camiseta.Imagen = imagen;
-            Console.Write(camiseta);
-            //this.repo.ModificarCamiseta(camiseta);
-            return RedirectToAction("PerfilUsuario", new { idUsuario = camiseta.IdUsuario });
+            int idUsuario = int.Parse(HttpContext.User.FindFirst("IDUSUARIO").Value);
+            await this.repo.ModificarCamiseta( idCamiseta,year,marca,descripcion,condicion,dorsal,jugador,imagen,idUsuario);
+
+            List<Pais> paises = await this.repo.GetPaisesAsync();
+            ViewBag.Paises=paises;
+            List<Etiqueta> etiquetas = await this.repo.GetEtiquetas(idCamiseta);
+            string[] etiquetasArray = etiquetas.Select(e => e.TxtEtiqueta).ToArray();
+            ViewData["ETIQUETAS"]=string.Join(",", etiquetasArray);
+            return RedirectToAction("PerfilUsuario", new { idUsuario = idUsuario });
         }
         
-        public IActionResult SubirImagenPerfil()
-        {
-            return View();
-        }
+        
 
         //[HttpPost]
         //public async Task<IActionResult> SubirImagenPerfil(IFormFile file)
@@ -139,15 +147,15 @@ namespace MvcProyectoJerseys.Controllers
         //    return View();
         //}
 
-        
 
+        [AuthorizeUsers]
         public async  Task<IActionResult> CreateCamiseta()
         {
             List<Pais> paises = await this.repo.GetPaisesAsync();
             ViewData["PAISES"]=paises;
             return View();
         }
-
+        [AuthorizeUsers]
         [ValidateAntiForgeryToken]
         [HttpPost]
         public async Task<IActionResult> CreateCamiseta(string equipo, string pais, int year, string marca, string equipacion, string condicion, int?dorsal, string?jugador,string? descripcion, IFormFile imagenCamiseta, string?etiquetas  )
@@ -165,17 +173,17 @@ namespace MvcProyectoJerseys.Controllers
             cam.Dorsal=dorsal;
             cam.Jugador=jugador;
             cam.EsActiva=1;
-            int idUser= HttpContext.Session.GetObject<Usuario>("USUARIO").IdUsuario;
-            cam.IdUsuario=idUser;
+            int idUsuario = int.Parse(HttpContext.User.FindFirst("IDUSUARIO").Value);
+            cam.IdUsuario=idUsuario;
             cam.Descripcion=descripcion;
-            string filename = this.repo.GenerateUniqueFileName(idUser, imagenCamiseta);
+            string filename = this.repo.GenerateUniqueFileName(idUsuario, imagenCamiseta);
             cam.Imagen=filename;
             cam.FechaSubida=DateTime.Now;
             await this.repo.SubirCamiseta(cam);
             await this.repo.SubirFichero(imagenCamiseta, Folders.Jerseys, filename);
             if (etiquetas!=null)
             {
-                List<string> listaEtiquetas = etiquetas.Split(',').Select(e=>e.Trim()).ToList();
+                List<string> listaEtiquetas = etiquetas.ToUpper().Split(',').Select(e=>e.Trim()).ToList();
                 Console.Write(listaEtiquetas);
                 await this.repo.InsertEtiquetas(listaEtiquetas, idCamiseta);
             }
@@ -187,35 +195,37 @@ namespace MvcProyectoJerseys.Controllers
             return RedirectToAction("PerfilUsuario");
         }
 
+        [AuthorizeUsers]
         public async Task<IActionResult>AgregarAmigo(int idAmigo)
         {
             //Comprobar que no son amigos
             //if
             //si esta bien agregar
-            int idUser= HttpContext.Session.GetObject<UsuarioPuro>("USUARIO").IdUsuario;
-            if (await this.repo.AreAlreadyFriends(idUser, idAmigo))
+            int idUsuario = int.Parse(HttpContext.User.FindFirst("IDUSUARIO").Value);
+            if (await this.repo.AreAlreadyFriends(idUsuario, idAmigo))
             {
                 TempData["ERROR"]="YA SOIS AMIGOS";
                 return View();
             }
             else
             {
-                await this.repo.SetAmistad(idUser, idAmigo);
+                await this.repo.SetAmistad(idUsuario, idAmigo);
                 return RedirectToAction("PerfilUsuario");
             }
         }
+        [AuthorizeUsers]
         public IActionResult BuscarAmigo()
         {
             return View();
         }
-
+        [AuthorizeUsers]
         [HttpPost]
         public async Task<IActionResult>BuscarAmigo(string codigoAmigo)
         {
-            var usuarioActualId = HttpContext.Session.GetObject<UsuarioPuro>("USUARIO").IdUsuario;
+            int idUsuario = int.Parse(HttpContext.User.FindFirst("IDUSUARIO").Value);
             var amigo = await this.repo.FindUsuarioAmistadCode(codigoAmigo);
 
-            if (amigo.IdUsuario==usuarioActualId)
+            if (amigo.IdUsuario==idUsuario)
             {
                 TempData["ERROR"]="No puedes agregarte a ti mismo.";
                 return View();
@@ -231,16 +241,23 @@ namespace MvcProyectoJerseys.Controllers
             }
 
         }
-
+        [AuthorizeUsers]
         public async Task<IActionResult> UsuarioPerfil(int amigoId)
         {
-            Usuario user = await this.repo.GetUsuarioLibre(amigoId);
-            ViewData["USUARIO"]=user;
+            
+            ViewData["USUARIO"]=await this.repo.GetUsuarioLibre(amigoId);
             ViewData["NUMAMIGOS"]=await this.repo.GetNumberAmigosAsync(amigoId);
             ViewData["LISTAAMIGOS"]=await this.repo.GetListaAmigosAsync(amigoId);
             List<Camiseta> camisetas = await this.repo.GetCamisetasUsuario(amigoId);
             ViewData["CAMISETAS"] = camisetas;
             return View();
+        }
+
+        [AuthorizeUsers]
+        public async Task<IActionResult>DeleteCamiseta(int idCamiseta)
+        {
+            await this.repo.DeleteCamiseta(idCamiseta);
+            return RedirectToAction("PerfilUsuario");
         }
 
     }

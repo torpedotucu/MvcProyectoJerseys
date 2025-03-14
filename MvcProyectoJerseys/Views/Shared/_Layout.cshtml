@@ -5,10 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - MvcProyectoJerseys</title>
     <script type="importmap"></script>
+    <link rel="icon" type="image/svg" href="/images/logo-clean.png" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/MvcProyectoJerseys.styles.css" asp-append-version="true" />
-    @RenderSection("Styles",required:false)
+    @RenderSection("Styles", required: false)
 </head>
 <body>
     <header>
@@ -19,20 +20,20 @@
                         <svg class="bi" width="40" height="32" role="img" aria-label="Bootstrap"><use xlink:href="#bootstrap" /></svg>
                     </a>
                 </div>
-
                 <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
-                    <li><a href="#" class="nav-link px-2 link-secondary">Home</a></li>
+                    <li><a asp-controller="Camisetas" asp-action="Index" asp class="nav-link px-2 link-secondary">Home</a></li>
                     <li>
-                        <a asp-action="PerfilUsuario" asp-controller="Camisetas" asp-route-idUsuario="2"
-                            class="nav-link px-2">
+                        <a asp-action="PerfilUsuario" asp-controller="Camisetas"
+                           class="nav-link px-2">
                             Perfil
                         </a>
                     </li>
                     <li>
-                        <a asp-action="CreateCamiseta" asp-controller="Camisetas">
+                        <a asp-action="CreateCamiseta" asp-controller="Camisetas" class="nav-link text-bg-danger">
                             Create Camiseta
                         </a>
                     </li>
+                    <partial name="_MenuLogin" />
                 </ul>
 
                 <div class="col-md-3 text-end">

@@ -2,50 +2,54 @@
 @{
     List<Camiseta> camisetas = ViewData["CAMISETAS"] as List<Camiseta>;
     List<Usuario> amigos = ViewData["LISTAAMIGOS"] as List<Usuario>;
-    int numAmigos =(int) ViewData["NUMAMIGOS"] ;
+    int numAmigos = (int)ViewData["NUMAMIGOS"];
 }
 
-
 <div class="container mt-4">
+
     <!-- Perfil de Usuario -->
-    <div class="card mb-4">
-        <div class="card-body text-center">
-            <img src="~/avatar/@Model.Avatar" class="rounded-circle mb-3" width="100" height="100" alt="Usuario">
-            <h5 class="card-title">@Model.UserName</h5>
-            <p class="card-text">
-                @Model.Alias
-            </p>
-            <p class="card-text">@Model.Correo</p>
-            <p class="card-text">@Model.Equipo, @Model.Pais</p>
-            <p class="btn btn-info" data-bs-toggle="modal" data-bs-target="#userListModal">@numAmigos</p>
-            
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editProfileModal">Editar Perfil</button>
+    <div class="card text-center mb-4 shadow-sm">
+        <div class="card-body">
+            <img src="~/avatar/@Model.Avatar" class="rounded-circle mb-3 border" width="120" height="120" alt="Usuario">
+            <h4 class="card-title">@Model.UserName</h4>
+            <p class="text-muted">@Model.Alias</p>
+            <p class="text-muted">@Model.Correo</p>
+            <p><strong>@Model.Equipo</strong>, @Model.Pais</p>
+
+            <!-- Botón para ver amigos -->
+            <button class="btn btn-info me-2" data-bs-toggle="modal" data-bs-target="#userListModal">
+                Amigos (@numAmigos)
+            </button>
+
+            <!-- Botón para editar perfil -->
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editProfileModal">
+                Editar Perfil
+            </button>
         </div>
     </div>
-    @if(numAmigos>0){
+
+    <!-- Lista de amigos (Modal) -->
+    @if (numAmigos > 0)
+    {
         <div class="modal fade" id="userListModal" tabindex="-1" aria-labelledby="userListModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-scrollable">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="userListModalLabel">Lista de Usuarios</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <h5 class="modal-title">Lista de Amigos</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body">
                         <ul class="list-group">
-                            @foreach (Usuario amigo in amigos)
+                            @foreach (var amigo in amigos)
                             {
                                 <li class="list-group-item d-flex align-items-center">
-                                    <!-- Imagen de perfil -->
-                                    <a asp-controller="Camisetas" asp-action="UsuarioPerfil" asp-route-amigoId="@amigo.IdUsuario">
-                                        <img src="~/avatar/@amigo.Avatar" class="rounded-circle me-3" width="50" height="50" alt="Foto de @amigo.Alias">
-
-                                        <!-- Alias y Username -->
+                                    <a asp-controller="Camisetas" asp-action="UsuarioPerfil" asp-route-amigoId="@amigo.IdUsuario" class="d-flex align-items-center text-decoration-none text-dark">
+                                        <img src="~/avatar/@amigo.Avatar" class="rounded-circle me-3 border" width="50" height="50" alt="@amigo.Alias">
                                         <div>
                                             <strong>@amigo.Alias</strong><br>
                                             <small class="text-muted">@amigo.UserName</small>
                                         </div>
                                     </a>
-                                    
                                 </li>
                             }
                         </ul>
@@ -53,75 +57,74 @@
                 </div>
             </div>
         </div>
-        
     }
-    <div>
-        <a asp-action="BuscarAmigo" class="btn btn-dark">
-            Agregar amigo
-        </a>
+
+    <!-- Botón para agregar amigo -->
+    <div class="text-center mb-4">
+        <a asp-action="BuscarAmigo" class="btn btn-dark">Agregar amigo</a>
     </div>
+
     <!-- Modal para Editar Perfil -->
     <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="editProfileModalLabel">Editar Perfil</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="modal-title">Editar Perfil</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <form method="post" enctype="multipart/form-data">
                         @Html.AntiForgeryToken()
                         <div class="mb-3">
-                            <label for="alias" class="form-label">Alias</label>
+                            <label class="form-label">Alias</label>
                             <input type="text" class="form-control" name="alias" value="@Model.Alias">
                         </div>
                         <div class="mb-3">
-                            <label for="contrasena" class="form-label">Contraseña</label>
-                            <input type="text" class="form-control" name="contrasena" />
+                            <label class="form-label">Contraseña</label>
+                            <input type="password" class="form-control" name="contrasena">
                         </div>
                         <div class="mb-3">
-                            <label for="equipo" class="form-label">Equipo</label>
-                            <input type="text" class="form-control" id="equipo" name="equipo" value="@Model.Equipo">
+                            <label class="form-label">Equipo</label>
+                            <input type="text" class="form-control" name="equipo" value="@Model.Equipo">
                         </div>
-                        <div class="=mb-3">
-                            <label for="avatar" class="form-label">Avatar</label>
-                            <input name="avatar" type="file" class="form-control" accept="image/*" required />
+                        <div class="mb-3">
+                            <label class="form-label">Avatar</label>
+                            <input name="avatar" type="file" class="form-control" accept="image/*">
                         </div>
-                        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                        <button type="submit" class="btn btn-primary w-100">Guardar Cambios</button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
-    @if(camisetas!=null){
-        <!-- Camisetas del Usuario -->
-        <div class="album py-5 bg-body-tertiary"> 
-        <div class="container"> 
-             <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3"> 
-                 @foreach(Camiseta camiseta in camisetas){ 
-                     <div class="col"> 
-                         <div class="card shadow-sm border-warning"> 
-                            <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><img src="~/jersey/@camiseta.Imagen" alt="Alternate Text" /></svg> 
-                             <div class="card-body"> 
-                                 @if (camiseta.Descripcion != null) 
-                                 { 
-                                     <p class="card-text">@camiseta.Descripcion</p> 
-                                 } 
-                                 <div class="d-flex justify-content-between align-items-center"> 
-                                     <div class="btn-group">
-                                            <a class="btn btn-sm btn-outline-primary" asp-controller="Camisetas" asp-action="DetallesCamiseta" asp-route-idCamiseta="@camiseta.IdCamiseta">View</a>
-                                            <a class="btn btn-sm btn-outline-secondary" asp-controller="Camisetas" asp-action="UpdateCamiseta" asp-route-idCamiseta="@camiseta.IdCamiseta">Modificar</a>
-                                     </div> 
-                                     <small class="text-body-secondary">9 mins</small> 
-                                 </div> 
-                             </div> 
-                         </div> 
-                     </div> 
-                 }    
-             </div> 
-         </div> 
-     </div>
+
+    <!-- Camisetas del Usuario -->
+    @if (camisetas != null && camisetas.Any())
+    {
+        <h4 class="text-center mt-4">Mis Camisetas</h4>
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
+            @foreach (var camiseta in camisetas)
+            {
+                <div class="col">
+                    <div class="card shadow-sm border-warning">
+                        <img src="~/jersey/@camiseta.Imagen" class="card-img-top" style="height: 220px; object-fit: cover;" alt="Camiseta">
+                        <div class="card-body">
+                            @if (!string.IsNullOrEmpty(camiseta.Descripcion))
+                            {
+                                <p class="card-text">@camiseta.Descripcion</p>
+                            }
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="btn-group">
+                                    <a class="btn btn-sm btn-outline-primary" asp-controller="Camisetas" asp-action="DetallesCamiseta" asp-route-idCamiseta="@camiseta.IdCamiseta">Ver</a>
+                                    <a class="btn btn-sm btn-outline-secondary" asp-controller="Camisetas" asp-action="UpdateCamiseta" asp-route-idCamiseta="@camiseta.IdCamiseta">Editar</a>
+                                    <a class="btn btn-sm btn-outline-danger" asp-controller="Camisetas" asp-action="DeleteCamiseta" asp-route-idCamiseta="@camiseta.IdCamiseta">Eliminar</a>
+                                </div>
+                                <small class="text-muted">@camiseta.FechaSubida.ToString("dd/MM/yyyy")</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
     }
 </div>
-
-    

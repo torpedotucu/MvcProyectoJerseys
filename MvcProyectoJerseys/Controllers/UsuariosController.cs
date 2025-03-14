@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MvcProyectoJerseys.Extensions;
 using MvcProyectoJerseys.Helpers;
 using MvcProyectoJerseys.Models;
 using MvcProyectoJerseys.Repositories;
+using System.Security.Claims;
 
 namespace MvcProyectoJerseys.Controllers
 {
@@ -69,10 +72,39 @@ namespace MvcProyectoJerseys.Controllers
             }
             else
             {
-                HttpContext.Session.SetObject("USUARIO", user);
-                ViewBag.INICIO=user.Equipo;
-                return RedirectToAction("PerfilUsuario","Camisetas");
+                //HttpContext.Session.SetObject("USUARIO", user);
+                //ViewBag.INICIO=user.Equipo;
+                //return RedirectToAction("PerfilUsuario","Camisetas");
+                ClaimsIdentity identity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme, ClaimTypes.Name, ClaimTypes.Role);
+                Claim claimUserName = new Claim(ClaimTypes.Name, user.UserName);
+                Claim claimIdUser = new Claim("IDUSUARIO", user.IdUsuario.ToString());
+                identity.AddClaim(claimUserName);
+                identity.AddClaim(claimIdUser);
+                ClaimsPrincipal userPrincipal = new ClaimsPrincipal(identity);
+                await HttpContext.SignInAsync(
+                    CookieAuthenticationDefaults.AuthenticationScheme, userPrincipal, new AuthenticationProperties
+                    {
+                        ExpiresUtc=DateTime.Now.AddMinutes(30)
+                    });
+
+                string controller = TempData["controller"].ToString();
+                string action = TempData["action"].ToString();
+                if (TempData["id"]!=null)
+                {
+                    string id = TempData["id"].ToString();
+                    return RedirectToAction(action, controller, new { id = id });
+                }
+                else
+                {
+                    return RedirectToAction(action, controller);
+                }
             }
+        }
+
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return RedirectToAction("Index", "Home");
         }
 
     }
