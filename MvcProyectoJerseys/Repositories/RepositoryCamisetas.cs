@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using MvcProyectoJerseys.Data;
 using MvcProyectoJerseys.Helpers;
 using MvcProyectoJerseys.Models;
+using MvcProyectoJerseys.Services;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
@@ -14,15 +15,17 @@ namespace MvcProyectoJerseys.Repositories
 
     public class RepositoryCamisetas
     {
+        private ServiceStorageBlobs service;
         private CamisetasContext context;
         private IWebHostEnvironment hostEnvironment;
         private HelperPathProvider helperPathProvider;
 
-        public RepositoryCamisetas(CamisetasContext context, IWebHostEnvironment hostEnvironment,HelperPathProvider helper) 
+        public RepositoryCamisetas(CamisetasContext context, IWebHostEnvironment hostEnvironment,HelperPathProvider helper, ServiceStorageBlobs service) 
         {
             this.context=context;
             this.hostEnvironment=hostEnvironment;
             this.helperPathProvider=helper;
+            this.service=service;
         }
         public async Task<Usuario?> LoginUsuario(string email, string contrasena)
         {
@@ -299,6 +302,7 @@ namespace MvcProyectoJerseys.Repositories
             {
                 await file.CopyToAsync(stream);
             }
+            await this.service.UploadBlobAsync("martes", nombreArchivo, file.OpenReadStream());
         }
 
         public async Task CreateUsuario(UsuarioPuro usuario)

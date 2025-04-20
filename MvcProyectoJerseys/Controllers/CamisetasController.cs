@@ -5,6 +5,7 @@ using MvcProyectoJerseys.Filters;
 using MvcProyectoJerseys.Helpers;
 using MvcProyectoJerseys.Models;
 using MvcProyectoJerseys.Repositories;
+using MvcProyectoJerseys.Services;
 using System.ComponentModel;
 using System.Threading.Tasks;
 
@@ -14,9 +15,11 @@ namespace MvcProyectoJerseys.Controllers
     {
         RepositoryCamisetas repo;
         HelperPathProvider helper;
-        public CamisetasController(RepositoryCamisetas repo, HelperPathProvider helper)
+        private ServiceStorageBlobs service;
+        public CamisetasController(RepositoryCamisetas repo, HelperPathProvider helper, ServiceStorageBlobs service)
         {
             this.repo = repo;
+            this.service=service;
             this.helper=helper;
         }
         [AuthorizeUsers]
@@ -183,6 +186,7 @@ namespace MvcProyectoJerseys.Controllers
             cam.FechaSubida=DateTime.Now;
             await this.repo.SubirCamiseta(cam);
             await this.repo.SubirFichero(imagenCamiseta, Folders.Jerseys, filename);
+            //await this.service.UploadBlobAsync("martes",imagenCamiseta.FileName,imagenCamiseta.OpenReadStream());
             if (etiquetas!=null)
             {
                 List<string> listaEtiquetas = etiquetas.ToUpper().Split(',').Select(e=>e.Trim()).ToList();
@@ -195,7 +199,7 @@ namespace MvcProyectoJerseys.Controllers
             List<Pais> paises = await this.repo.GetPaisesAsync();
             ViewData["PAISES"]=paises;
             return RedirectToAction("PerfilUsuario");
-        }
+        }   
 
         [AuthorizeUsers]
         public async Task<IActionResult>AgregarAmigo(int idAmigo)

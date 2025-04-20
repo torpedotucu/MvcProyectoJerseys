@@ -1,9 +1,11 @@
+using Azure.Storage.Blobs;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MvcProyectoJerseys.Data;
 using MvcProyectoJerseys.Helpers;
 using MvcProyectoJerseys.Repositories;
+using MvcProyectoJerseys.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,8 +20,10 @@ builder.Services.AddTransient<RepositoryCamisetas>();
 builder.Services.AddDbContext<CamisetasContext>(options => options.UseSqlServer(connectionString));
 builder.Services.AddSingleton<HelperPathProvider>();
 
-
-
+string azureKeys = builder.Configuration.GetValue<string>("AzureKeys:StorageAccount");
+BlobServiceClient blobServiceClient = new BlobServiceClient(azureKeys);
+builder.Services.AddTransient<BlobServiceClient>(x => blobServiceClient);
+builder.Services.AddTransient<ServiceStorageBlobs>();
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultSignInScheme=CookieAuthenticationDefaults.AuthenticationScheme;
