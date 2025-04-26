@@ -15,30 +15,34 @@ namespace MvcProyectoJerseys.Controllers
     {
         RepositoryCamisetas repo;
         HelperPathProvider helper;
-        private ServiceStorageBlobs service;
-        public CamisetasController(RepositoryCamisetas repo, HelperPathProvider helper, ServiceStorageBlobs service)
+        private ServiceStorageBlobs serviceBlobs;
+        private ServiceCamisetas service;
+        public CamisetasController(RepositoryCamisetas repo, HelperPathProvider helper, ServiceStorageBlobs serviceBlobs,ServiceCamisetas service)
         {
             this.repo = repo;
+            this.serviceBlobs=serviceBlobs;
             this.service=service;
             this.helper=helper;
         }
         [AuthorizeUsers]
         public async Task<IActionResult> Index()
         {
-            Usuario usuario = HttpContext.Session.GetObject<Usuario>("USUARIO");
-            int idUsuario = int.Parse(HttpContext.User.FindFirst("IDUSUARIO").Value);
-            List<Camiseta> camisetas = await this.repo.GetPublicacionesInicio(idUsuario);
+            //Usuario usuario = HttpContext.Session.GetObject<Usuario>("USUARIO");
+            //int idUsuario = int.Parse(HttpContext.User.FindFirst("IDUSUARIO").Value);
+            List<Camiseta> camisetas = await this.service.GetPublicacionesInicio();
             return View(camisetas);
         }
         [AuthorizeUsers]
         public async Task<IActionResult> PerfilUsuario()
         {
             //Usuario usuario=HttpContext.Session.GetObject<Usuario>("USUARIO");
-            int dato =int.Parse( HttpContext.User.FindFirst("IDUSUARIO").Value);
-            Console.Write(dato);
-            Usuario usuario =await this.repo.GetUsuarioLibre(dato);
+            //int dato =int.Parse( HttpContext.User.FindFirst("IDUSUARIO").Value);
+
+            Usuario usuario = await this.service.GetUsuario();
             ViewData["USUARIO"] = usuario;
             ViewData["NUMAMIGOS"]=await this.repo.GetNumberAmigosAsync(usuario.IdUsuario);
+            List<Usuario>amigos = await this.repo.GetListaAmigosAsync(usuario.IdUsuario);
+            int num = amigos.Count;
             ViewData["LISTAAMIGOS"]=await this.repo.GetListaAmigosAsync(usuario.IdUsuario);
             Console.WriteLine(usuario.UserName);
             List<Camiseta> camisetas = await this.repo.GetCamisetasUsuario(usuario.IdUsuario);

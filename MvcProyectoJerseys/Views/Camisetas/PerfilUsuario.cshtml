@@ -1,8 +1,14 @@
 ﻿@model Usuario
+@inject IConfiguration configuration
 @{
     List<Camiseta> camisetas = ViewData["CAMISETAS"] as List<Camiseta>;
     List<Usuario> amigos = ViewData["LISTAAMIGOS"] as List<Usuario>;
     int numAmigos = (int)ViewData["NUMAMIGOS"];
+    string urlBlob = this.configuration.GetValue<string>("BlobsContainer");
+    // foreach(var camiseta in camisetas)
+    // {
+    //     camiseta.Imagen=ruta +camiseta.Imagen;
+    // }
 }
 @section Styles{
     <link rel="stylesheet" href="/css/PerfilUsuario.css" />
@@ -18,7 +24,7 @@
         <div class="card-overlay">
             <div class="avatar-container mb-3">
                 @* <img src="~/avatar/@Model.Avatar" class="w-100 h-100 object-fit-cover" alt="Usuario"> *@
-                <img src="https://storagetajamarrgo.blob.core.windows.net/martes/@Model.Avatar" class="w-100 h-100 object-fit-cover" alt="Usuario">
+                <img src="@urlBlob/@Model.Avatar" class="w-100 h-100 object-fit-cover" alt="Usuario">
             </div>
 
             <h3 class="text-center mb-0">@Model.UserName</h3>

@@ -1,14 +1,19 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Mvc;
+using MvcProyectoJerseys.Models;
 using MvcProyectoJerseys.Repositories;
+using MvcProyectoJerseys.Services;
+using System.Security.Claims;
 
 namespace MvcProyectoJerseys.Controllers
 {
     public class ManagedController : Controller
     {
-        private RepositoryCamisetas repo;
-        public ManagedController(RepositoryCamisetas repo)
+        private ServiceCamisetas service;
+        public ManagedController(ServiceCamisetas serviceCamisetas)
         {
-            this.repo=repo;
+            this.service=service;
         }
         public IActionResult Login()
         {
@@ -18,6 +23,13 @@ namespace MvcProyectoJerseys.Controllers
         public async Task<IActionResult>Login(string username,string password)
         {
             return View();
+        }
+
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync
+                (CookieAuthenticationDefaults.AuthenticationScheme);
+            return RedirectToAction("Index", "Home");
         }
         public IActionResult Index()
         {

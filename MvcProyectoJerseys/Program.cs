@@ -15,7 +15,7 @@ builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession();
 builder.Services.AddHttpContextAccessor();
 string connectionString = builder.Configuration.GetConnectionString("SqlCamisetas");
-
+builder.Services.AddTransient<ServiceCamisetas>();
 builder.Services.AddTransient<RepositoryCamisetas>();
 builder.Services.AddDbContext<CamisetasContext>(options => options.UseSqlServer(connectionString));
 builder.Services.AddSingleton<HelperPathProvider>();

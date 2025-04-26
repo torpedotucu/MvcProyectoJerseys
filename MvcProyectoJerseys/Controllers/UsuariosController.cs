@@ -7,6 +7,8 @@ using MvcProyectoJerseys.Extensions;
 using MvcProyectoJerseys.Helpers;
 using MvcProyectoJerseys.Models;
 using MvcProyectoJerseys.Repositories;
+using MvcProyectoJerseys.Services;
+using NuGet.Common;
 using System.Security.Claims;
 
 namespace MvcProyectoJerseys.Controllers
@@ -14,12 +16,14 @@ namespace MvcProyectoJerseys.Controllers
     public class UsuariosController : Controller
     {
         private RepositoryCamisetas repo;
+        private ServiceCamisetas service;
         private HelperPathProvider helper;
         
-        public UsuariosController(RepositoryCamisetas repo, HelperPathProvider helper)
+        public UsuariosController(RepositoryCamisetas repo, HelperPathProvider helper,ServiceCamisetas service)
         {
             this.repo=repo;
             this.helper=helper;
+            this.service=service;
             
         }
 
@@ -66,29 +70,84 @@ namespace MvcProyectoJerseys.Controllers
             return View();
         }
 
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> Login(string correo, string password)
+        //{
+        //    Usuario user = await this.repo.LoginUsuario(correo, password);
+        //    if (user==null)
+        //    {
+        //        ViewBag.ERROR=true;
+        //        return View();
+        //    }
+        //    else
+        //    {
+
+        //        ClaimsIdentity identity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme, ClaimTypes.Name, ClaimTypes.Role);
+        //        Claim claimUserName = new Claim(ClaimTypes.Name, user.UserName);
+        //        Claim claimIdUser = new Claim("IDUSUARIO", user.IdUsuario.ToString());
+        //        identity.AddClaim(claimUserName);
+        //        identity.AddClaim(claimIdUser);
+        //        ClaimsPrincipal userPrincipal = new ClaimsPrincipal(identity);
+        //        await HttpContext.SignInAsync(
+        //            CookieAuthenticationDefaults.AuthenticationScheme, userPrincipal, new AuthenticationProperties
+        //            {
+        //                ExpiresUtc=DateTime.Now.AddMinutes(30)
+        //            });
+
+        //        string controller = TempData["controller"].ToString();
+        //        string action = TempData["action"].ToString();
+        //        if (TempData["id"]!=null)
+        //        {
+        //            string id = TempData["id"].ToString();
+        //            return RedirectToAction(action, controller, new { id = id });
+        //        }
+        //        else
+        //        {
+        //            return RedirectToAction(action, controller);
+        //        }
+        //    }
+        //}
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(string correo, string password)
         {
-            Usuario user = await this.repo.LoginUsuario(correo, password);
-            if (user==null)
+            LoginModel loginModel = new LoginModel();
+            loginModel.UserName=correo;
+            loginModel.Password=password;
+            string token = await this.service.GetTokenAsync(loginModel.UserName, loginModel.Password);
+            if (token==null)
             {
                 ViewBag.ERROR=true;
+                ViewData["MENSAJE"]="Usuario/Password Incorrectos";
                 return View();
             }
             else
             {
-                
-                ClaimsIdentity identity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme, ClaimTypes.Name, ClaimTypes.Role);
-                Claim claimUserName = new Claim(ClaimTypes.Name, user.UserName);
-                Claim claimIdUser = new Claim("IDUSUARIO", user.IdUsuario.ToString());
-                identity.AddClaim(claimUserName);
-                identity.AddClaim(claimIdUser);
-                ClaimsPrincipal userPrincipal = new ClaimsPrincipal(identity);
-                await HttpContext.SignInAsync(
-                    CookieAuthenticationDefaults.AuthenticationScheme, userPrincipal, new AuthenticationProperties
+                ViewData["MENSAJE"] = "Ya tienes tu Token!!!";
+                HttpContext.Session.SetString("TOKEN", token);
+
+                ClaimsIdentity identity =
+                    new ClaimsIdentity
+                    (CookieAuthenticationDefaults.AuthenticationScheme
+                    , ClaimTypes.Name, ClaimTypes.Role);
+                identity.AddClaim(new Claim
+                    (ClaimTypes.Name, loginModel.UserName));
+
+                //GUARDAR EL ID EN VEZ DE LA CONTRASEÑA
+                //Usuario usuario=this.service.GetUsuarioCorreo()
+                //identity.AddClaim(new Claim
+                //    (ClaimTypes.NameIdentifier, loginModel.Password));
+
+
+                identity.AddClaim(new Claim("TOKEN", token));
+                ClaimsPrincipal principal =
+                    new ClaimsPrincipal(identity);
+                await HttpContext.SignInAsync
+                    (CookieAuthenticationDefaults.AuthenticationScheme
+                    , principal, new AuthenticationProperties
                     {
-                        ExpiresUtc=DateTime.Now.AddMinutes(30)
+                        ExpiresUtc = DateTime.UtcNow.AddMinutes(30)
                     });
 
                 string controller = TempData["controller"].ToString();
@@ -102,8 +161,12 @@ namespace MvcProyectoJerseys.Controllers
                 {
                     return RedirectToAction(action, controller);
                 }
+
             }
         }
+
+
+
 
         public async Task<IActionResult> Logout()
         {

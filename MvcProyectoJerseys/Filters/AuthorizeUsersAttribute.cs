@@ -30,6 +30,19 @@ namespace MvcProyectoJerseys.Filters
             {
                 context.Result=this.GetRoute("Usuarios", "Login");
             }
+            //var user = context.HttpContext.User;
+            //if (user.Identity.IsAuthenticated == false)
+            //{
+            //    RouteValueDictionary routeLogin =
+            //        new RouteValueDictionary(new
+            //        {
+            //            controller = "Usuarios",
+            //            action = "Login"
+            //        });
+            //    context.Result = new
+            //        RedirectToRouteResult(routeLogin);
+            //}
+
         }
 
 
