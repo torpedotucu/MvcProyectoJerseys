@@ -172,12 +172,14 @@ namespace MvcProyectoJerseys.Services
 
         private string GetToken()
         {
-            return this.contextAccessor.HttpContext.User.FindFirst(x => x.Type == "TOKEN")?.Value;
+            //return this.contextAccessor.HttpContext.User.FindFirst(x => x.Type == "TOKEN")?.Value;
+            string token = this.contextAccessor.HttpContext.Session.GetString("TOKEN");
+            return token;
         }
 
         public async Task<List<Camiseta>> GetPublicacionesInicio()
         {
-            string token = this.contextAccessor.HttpContext.User.FindFirst(x => x.Type=="TOKEN").Value;
+            string token = this.GetToken();
             string request = uUsu+"publicacionesinicio";
             List<Camiseta> camisetas = await this.CallApiAsync<List<Camiseta>>(request, token);
             return camisetas;
@@ -189,7 +191,14 @@ namespace MvcProyectoJerseys.Services
             Usuario usuario = await this.CallApiAsync<Usuario>(request, token,HttpMethod.Get);
             return usuario;
         }
-        
+        public async Task<Usuario> GetUsuario(int idUsuario)
+        {
+            string token = this.GetToken();
+            string request = uUsu+"GetUsuario/"+idUsuario;
+            Usuario usuario = await this.CallApiAsync<Usuario>(request, token, HttpMethod.Get);
+            return usuario;
+        }
+
         public async Task<Usuario>GetUsuarioCorreo(string correo)
         {
             string token = this.GetToken();
@@ -198,6 +207,21 @@ namespace MvcProyectoJerseys.Services
             return usuario;
         }
 
+        public async Task<List<Camiseta>> GetCamisetasUsuario()
+        {
+            string token = this.GetToken();
+            string request = uCam+"camisetasUsuario";
+            List<Camiseta> camisetas = await this.CallApiAsync<List<Camiseta>>(request, token, HttpMethod.Get);
+            return camisetas;
+        }
+
+        public async Task<List<Camiseta>> GetCamisetasUsuario(int idUsuario)
+        {
+            string token = this.GetToken();
+            string request = uCam+"CamisetasUsuarioExterno/"+idUsuario;
+            List<Camiseta> camisetas = await this.CallApiAsync<List<Camiseta>>(request, token, HttpMethod.Get);
+            return camisetas;
+        }
         public async Task<List<Usuario>> GetAmigosUsuario()
         {
             string token = this.GetToken();
@@ -237,11 +261,12 @@ namespace MvcProyectoJerseys.Services
 
         }
 
-        public async Task GetComentariosAsync(int idCamiseta)
+        public async Task<List<Comentario>> GetComentariosAsync(int idCamiseta)
         {
             string token = this.GetToken();
             string request = uCom+"ComentariosCamiseta/"+idCamiseta;
-            await this.CallApiAsync<object>(request, token, HttpMethod.Get);
+            List<Comentario>comentarios=await this.CallApiAsync<List<Comentario>>(request, token, HttpMethod.Get);
+            return comentarios;
         }
 
         public async Task<CamisetaComentarios>DetalleCamiseta(int idCamiseta)
@@ -297,6 +322,44 @@ namespace MvcProyectoJerseys.Services
             await this.CallApiAsync<object>(request, token, HttpMethod.Post);
         }
 
+        //VER AMIGOS DEL USUARIO PROPIETARIO DEL TOKEN
+        public async Task<List<Usuario>>GetListaAmigosAsync()
+        {
+            string token = this.GetToken();
+            string request = uUsu+"Amigos";
+            List<Usuario> usuarios = await this.CallApiAsync<List<Usuario>>(request, token, HttpMethod.Get);
+            return usuarios;
+        }
+        //VER AMIGOS DE OTRO USUARIO
+        public async Task<List<Usuario>> GetListaAmigosAsync(int idUsuario)
+        {
+            string token = this.GetToken();
+            string request = uUsu+"AmigosUsuario/"+idUsuario;
+            List<Usuario> usuarios = await this.CallApiAsync<List<Usuario>>(request, token, HttpMethod.Get);
+            return usuarios;
+        }
 
+
+        public async Task InsertEtiquetas(List<string>etiquetas,int idCamiseta)
+        {
+            string token = this.GetToken();
+            string request = uCam+"InsertEtiquetas/"+idCamiseta;
+            await this.CallApiAsync<object>(request, token, HttpMethod.Post, etiquetas);
+
+        }
+
+        public async Task<List<Etiqueta>>GetEtiquetas(int idCamiseta)
+        {
+            string token = this.GetToken();
+            string request = uCam+"etiquetascamiseta/"+idCamiseta;
+            List<Etiqueta> etiquetas = await this.CallApiAsync<List<Etiqueta>>(request, token, HttpMethod.Get);
+            return etiquetas;
+        }
+        public async Task DeleteCamiseta(int idCamiseta)
+        {
+            string token = this.GetToken();
+            string request = uCam+"EliminarCamiseta/"+idCamiseta;
+            await this.CallApiAsync<object>(request, token, HttpMethod.Delete);
+        }
     }
 }
