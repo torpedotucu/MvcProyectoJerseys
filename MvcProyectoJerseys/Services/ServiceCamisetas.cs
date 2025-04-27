@@ -106,6 +106,68 @@ namespace MvcProyectoJerseys.Services
                 }
             }
         }
+        //METODO GPT
+        private async Task<T> CallApiAsync<T>(string request, HttpMethod method, object body = null)
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                client.BaseAddress = new Uri(this.UrlApi);
+                client.DefaultRequestHeaders.Clear();
+                client.DefaultRequestHeaders.Accept.Add(this.Header);
+
+                HttpRequestMessage message = new HttpRequestMessage(method, request);
+
+                if (body != null)
+                {
+                    string json = JsonConvert.SerializeObject(body);
+                    message.Content = new StringContent(json, Encoding.UTF8, "application/json");
+                }
+
+                HttpResponseMessage response = await client.SendAsync(message);
+                if (response.IsSuccessStatusCode)
+                {
+                    T data = await response.Content.ReadAsAsync<T>();
+                    return data;
+                }
+                else
+                {
+                    return default(T);
+                }
+            }
+        }
+        private async Task<T> CallApiAsync<T>(string request, string token, HttpMethod method, object body = null)
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                client.BaseAddress = new Uri(this.UrlApi);
+                client.DefaultRequestHeaders.Clear();
+                client.DefaultRequestHeaders.Accept.Add(this.Header);
+                client.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+
+                HttpRequestMessage message = new HttpRequestMessage(method, request);
+
+                if (body != null)
+                {
+                    string json = JsonConvert.SerializeObject(body);
+                    message.Content = new StringContent(json, Encoding.UTF8, "application/json");
+                }
+
+                HttpResponseMessage response = await client.SendAsync(message);
+                if (response.IsSuccessStatusCode)
+                {
+                    T data = await response.Content.ReadAsAsync<T>();
+                    return data;
+                }
+                else
+                {
+                    return default(T);
+                }
+            }
+        }
+
+
+
+
 
 
         private string GetToken()
@@ -124,7 +186,7 @@ namespace MvcProyectoJerseys.Services
         {
             string token = this.GetToken();
             string request = uUsu+"PerfilUsuario";
-            Usuario usuario = await this.CallApiAsync<Usuario>(request, token);
+            Usuario usuario = await this.CallApiAsync<Usuario>(request, token,HttpMethod.Get);
             return usuario;
         }
         
@@ -155,9 +217,86 @@ namespace MvcProyectoJerseys.Services
         public async Task<int> SubirCamiseta(CamisetaCreateDTO camiseta)
         {
             string token = this.GetToken();
-            string request = "";
-            //OTRO METODO PARA LAS PETICIONES PUT,POST...
+            string request = uCam+"InsertarCamiseta";
+            int idCamiseta = await this.CallApiAsync<int>(request, token, HttpMethod.Post, camiseta);
+            return idCamiseta;
         }
+
+        public async Task ModificarCamiseta(CamisetaUpdateDTO camiseta)
+        {
+            string token = this.GetToken();
+            string request = uCam+"actualizarcamiseta";
+            await this.CallApiAsync<object>(request, token, HttpMethod.Put, camiseta);
+
+        }
+        public async Task EditarPerfil(UsuarioUpdateDTO usuario)
+        {
+            string token = this.GetToken();
+            string request = uUsu+"EditarPerfil";
+            await this.CallApiAsync<object>(request, token, HttpMethod.Put, usuario);
+
+        }
+
+        public async Task GetComentariosAsync(int idCamiseta)
+        {
+            string token = this.GetToken();
+            string request = uCom+"ComentariosCamiseta/"+idCamiseta;
+            await this.CallApiAsync<object>(request, token, HttpMethod.Get);
+        }
+
+        public async Task<CamisetaComentarios>DetalleCamiseta(int idCamiseta)
+        {
+            string token = this.GetToken();
+            string request = uCam+"detallescamiseta/"+idCamiseta;
+            CamisetaComentarios camiseta = await this.CallApiAsync<CamisetaComentarios>(request, token, HttpMethod.Get);
+            return camiseta;
+        }
+
+
+        public async Task Comentar(ComentarioDTO comentario)
+        {
+            string token = this.GetToken();
+            string request = uCom+"comentar";
+            await this.CallApiAsync<object>(request, token, HttpMethod.Post, comentario);
+        }
+
+        public async Task<List<Pais>> GetPaisesAsync()
+        {
+            string request = "api/paises/paises";
+            List<Pais> paises = await this.CallApiAsync<List<Pais>>(request, HttpMethod.Get);
+            return paises;
+        }
+        
+
+        public async Task<int>CreateUsuario(UsuarioCreateDTO usuario)
+        {
+            string request = uUsu+"CreateUsuario";
+            int idUsuario = await this.CallApiAsync<int>(request, HttpMethod.Post, usuario);
+            return idUsuario;
+        }
+
+        public async Task<Usuario>FindUsuarioAmistadCode(string friendCode)
+        {
+            string token = this.GetToken();
+            string request = uUsu+"amigo/"+friendCode;
+            Usuario usuario = await this.CallApiAsync<Usuario>(request, token, HttpMethod.Get);
+            return usuario;
+        }
+        public async Task<bool> AreAlreadyFriends(int idUsuario)
+        {
+            string token = this.GetToken();
+            string request = uUsu+"arefriends/"+idUsuario;
+            bool loson = await this.CallApiAsync<bool>(request, token, HttpMethod.Get);
+            return loson;
+        }
+
+        public async Task SetAmistad(int userB)
+        {
+            string token = this.GetToken();
+            string request = uUsu+"SetAmistad"+userB;
+            await this.CallApiAsync<object>(request, token, HttpMethod.Post);
+        }
+
 
     }
 }

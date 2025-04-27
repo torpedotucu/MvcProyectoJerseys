@@ -35,5 +35,10 @@ namespace MvcProyectoJerseys.Controllers
         {
             return View();
         }
+        public async Task<List<Usuario>> GetListaAmigosAsync()
+        {
+            //SE DEBERIA HACER UNA LLAMADA APARTE PARA OBTENER LA LISTA DE AMIGOS DE UN USUARIO APARTE
+            //CAMBIAR LA LLAMADA Y PASARLE POR PARAMETRO IDUSUARIO??
+        }
     }
 }

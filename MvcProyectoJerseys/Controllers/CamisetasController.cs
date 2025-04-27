@@ -3,9 +3,10 @@ using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pag
 using MvcProyectoJerseys.Extensions;
 using MvcProyectoJerseys.Filters;
 using MvcProyectoJerseys.Helpers;
-using MvcProyectoJerseys.Models;
+
 using MvcProyectoJerseys.Repositories;
 using MvcProyectoJerseys.Services;
+using NugetJerseyHubRGO.Models;
 using System.ComponentModel;
 using System.Threading.Tasks;
 
