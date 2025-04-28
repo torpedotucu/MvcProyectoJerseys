@@ -1,10 +1,10 @@
 ﻿@model NugetJerseyHubRGO.Models.Usuario
-@inject IConfiguration configuration
+
 @{
     List<Camiseta> camisetas = ViewData["CAMISETAS"] as List<Camiseta>;
     List<Usuario> amigos = ViewData["LISTAAMIGOS"] as List<Usuario>;
     int numAmigos = (int)ViewData["NUMAMIGOS"];
-    string urlBlob = this.configuration.GetValue<string>("BlobsContainer");
+    string urlBlob = this.configuration.GetValue<string>("AzureKeys:BlobsContainer");
     // foreach(var camiseta in camisetas)
     // {
     //     camiseta.Imagen=ruta +camiseta.Imagen;
@@ -87,7 +87,7 @@
                                 <li class="list-group-item border-0 d-flex align-items-center">
                                     <a asp-controller="Camisetas" asp-action="UsuarioPerfil" asp-route-amigoId="@amigo.IdUsuario" class="d-flex align-items-center text-decoration-none text-dark">
                                         <div style="width: 60px; height: 60px; border-radius: 50%; overflow: hidden; border: 3px solid #1e88e5;">
-                                            <img src="~/avatar/@amigo.Avatar" class="w-100 h-100 object-fit-cover" alt="@amigo.Alias">
+                                            <img src="@urlBlob/@amigo.Avatar" class="w-100 h-100 object-fit-cover" alt="@amigo.Alias">
                                         </div>
                                         <div class="ms-3">
                                             <strong style="font-size: 18px;">@amigo.Alias</strong>
@@ -151,7 +151,7 @@
                 <div class="col">
                     <div class="jersey-card">
                         <div class="position-relative">
-                            <img src="~/jersey/@camiseta.Imagen" class="card-img-top" alt="Camiseta">
+                            <img src="@urlBlob/@camiseta.Imagen" class="card-img-top" alt="Camiseta">
                         </div>
                         <div class="card-body">
                             @if (!string.IsNullOrEmpty(camiseta.Descripcion))

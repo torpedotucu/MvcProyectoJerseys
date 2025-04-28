@@ -1,6 +1,7 @@
 ﻿@model List<Camiseta>
 @{
     ViewData["Title"] = "Colección de Camisetas";
+    string urlBlob = this.configuration.GetValue<string>("AzureKeys:BlobsContainer");
 }
 
 <div class="container mt-4">
@@ -18,7 +19,7 @@
                 <div class="card h-100 shadow-sm rounded-4 overflow-hidden jersey-card">
                     <div class="card-header bg-white border-bottom-0 d-flex align-items-center py-3">
                         <a asp-action="UsuarioPerfil" asp-route-amigoId="@camiseta.IdUsuario" class="me-2">
-                            <img src="~/avatar/@camiseta.Usuario.Avatar" class="rounded-circle shadow-sm" 
+                            <img src="@urlBlob/@camiseta.Usuario.Avatar" class="rounded-circle shadow-sm" 
                                 width="50" height="50" alt="@camiseta.Usuario.Alias"
                                 style="border: 2px solid #2196f3; object-fit: cover;">
                         </a>
@@ -34,7 +35,7 @@
                     <a asp-action="DetallesCamiseta" asp-controller="Camisetas" 
                        asp-route-idCamiseta="@camiseta.IdCamiseta" class="text-decoration-none">
                         <div class="position-relative jersey-img-container">
-                            <img src="~/jersey/@camiseta.Imagen" class="card-img-top jersey-img" 
+                            <img src="@urlBlob/@camiseta.Imagen" class="card-img-top jersey-img" 
                                  alt="@camiseta.Equipo" style="height: 280px; object-fit: cover;">
                             <div class="jersey-overlay d-flex flex-column justify-content-end p-3">
                                 <h5 class="text-white fw-bold mb-0">@camiseta.Equipo</h5>

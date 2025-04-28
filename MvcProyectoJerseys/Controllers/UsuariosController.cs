@@ -162,7 +162,8 @@ namespace MvcProyectoJerseys.Controllers
                     (CookieAuthenticationDefaults.AuthenticationScheme
                     , principal, new AuthenticationProperties
                     {
-                        ExpiresUtc = DateTime.UtcNow.AddMinutes(30)
+                        //ExpiresUtc = DateTime.UtcNow.AddMinutes(30)
+                        IsPersistent = false
                     });
                 Usuario usuario = await this.service.GetUsuarioCorreo(correo); // <-- este método deberías crearlo si no existe
                 if (usuario != null)

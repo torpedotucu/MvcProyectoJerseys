@@ -2,6 +2,7 @@
     List<Comentario> comentarios = ViewData["COMENTARIOS"] as List<Comentario> ?? new List<Comentario>();
     Camiseta camiseta = ViewData["CAMISETA"] as Camiseta;
     List<Etiqueta> etiquetas = ViewData["ETIQUETAS"] as List<Etiqueta>;
+    string urlBlob = this.configuration.GetValue<string>("AzureKeys:BlobsContainer");
 }
 
 <div class="container mt-5">
@@ -35,7 +36,7 @@
                         @camiseta.Year
                     </span>
                 </div>
-                <img src="/jersey/@camiseta.Imagen" class="img-fluid h-100 object-fit-cover" alt="@camiseta.Equipo @camiseta.Year">
+                <img src="@urlBlob/@camiseta.Imagen" class="img-fluid h-100 object-fit-cover" alt="@camiseta.Equipo @camiseta.Year">
             </div>
 
             <div class="col-md-7">
@@ -165,7 +166,7 @@
                     {
                         <div class="list-group-item border-0 border-bottom py-3 px-0">
                             <div class="d-flex">
-                                <img src="~/avatar/@comentario.Usuario.Avatar" class="rounded-circle me-3" width="48" height="48" alt="@comentario.Usuario.Alias">
+                                <img src="@urlBlob/@comentario.Usuario.Avatar" class="rounded-circle me-3" width="48" height="48" alt="@comentario.Usuario.Alias">
                                 <div class="flex-grow-1">
                                     <div class="d-flex justify-content-between align-items-center mb-2">
                                         <h6 class="mb-0 fw-bold">@comentario.Usuario.Alias</h6>

@@ -3,6 +3,7 @@
     List<Usuario> amigos = ViewData["LISTAAMIGOS"] as List<Usuario>;
     int numAmigos = (int)ViewData["NUMAMIGOS"];
     Usuario user = (Usuario)ViewData["USUARIO"];
+    string urlBlob = this.configuration.GetValue<string>("AzureKeys:BlobsContainer");
 }
 @section Styles{
     <link rel="stylesheet" href="~/css/UsuarioPerfil.css" />
@@ -13,7 +14,7 @@
     <div class="card sport-card mb-5">
         <div class="sport-gradient profile-header text-center text-white py-4">
             <div class="position-relative mb-4">
-                <img src="~/avatar/@user.Avatar" class="profile-avatar rounded-circle mx-auto d-block" alt="Usuario">
+                <img src="@urlBlob/@user.Avatar" class="profile-avatar rounded-circle mx-auto d-block" alt="Usuario">
             </div>
             <h3 class="fw-bold">@user.UserName</h3>
             <p class="fs-5 text-white-50">@user.Alias</p>
@@ -55,7 +56,7 @@
                             {
                                 <a asp-controller="Camisetas" asp-action="UsuarioPerfil" asp-route-amigoId="@amigo.IdUsuario"
                                    class="list-group-item list-group-item-action friend-item d-flex align-items-center p-3">
-                                    <img src="~/avatar/@amigo.Avatar" class="friend-avatar rounded-circle me-3" width="50" height="50" alt="Foto de @amigo.Alias">
+                                    <img src="@urlBlob/@amigo.Avatar" class="friend-avatar rounded-circle me-3" width="50" height="50" alt="Foto de @amigo.Alias">
                                     <div>
                                         <strong class="d-block">@amigo.Alias</strong>
                                         <small class="text-muted">@amigo.UserName</small>
@@ -81,7 +82,7 @@
                 <div class="col">
                     <div class="card jersey-card h-100">
                         <div class="overflow-hidden">
-                            <img src="~/jersey/@camiseta.Imagen" class="jersey-img card-img-top" alt="Camiseta de @user.UserName">
+                            <img src="@urlBlob/@camiseta.Imagen" class="jersey-img card-img-top" alt="Camiseta de @user.UserName">
                         </div>
                         <div class="card-body">
                             @if (!string.IsNullOrEmpty(camiseta.Descripcion))

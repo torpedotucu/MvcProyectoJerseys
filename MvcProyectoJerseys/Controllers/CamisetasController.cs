@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
 using MvcProyectoJerseys.Extensions;
 using MvcProyectoJerseys.Filters;
 using MvcProyectoJerseys.Helpers;
@@ -7,8 +6,6 @@ using MvcProyectoJerseys.Helpers;
 using MvcProyectoJerseys.Repositories;
 using MvcProyectoJerseys.Services;
 using NugetJerseyHubRGO.Models;
-using System.ComponentModel;
-using System.Threading.Tasks;
 
 namespace MvcProyectoJerseys.Controllers
 {
@@ -18,7 +15,7 @@ namespace MvcProyectoJerseys.Controllers
         HelperPathProvider helper;
         private ServiceStorageBlobs serviceBlobs;
         private ServiceCamisetas service;
-        public CamisetasController(RepositoryCamisetas repo, HelperPathProvider helper, ServiceStorageBlobs serviceBlobs,ServiceCamisetas service)
+        public CamisetasController(RepositoryCamisetas repo, HelperPathProvider helper, ServiceStorageBlobs serviceBlobs, ServiceCamisetas service)
         {
             this.repo = repo;
             this.serviceBlobs=serviceBlobs;
@@ -36,14 +33,14 @@ namespace MvcProyectoJerseys.Controllers
         [AuthorizeUsers]
         public async Task<IActionResult> PerfilUsuario()
         {
-            Usuario usuario=HttpContext.Session.GetObject<Usuario>("USUARIO");
+            Usuario usuario = HttpContext.Session.GetObject<Usuario>("USUARIO");
             //int dato =int.Parse( HttpContext.User.FindFirst("IDUSUARIO").Value);
 
             //Usuario usuario = await this.service.GetUsuario();
             ViewData["USUARIO"] = usuario;
-            
-            List<Usuario>amigos = await this.service.GetListaAmigosAsync(usuario.IdUsuario);
-            
+
+            List<Usuario> amigos = await this.service.GetListaAmigosAsync(usuario.IdUsuario);
+
             ViewData["NUMAMIGOS"]=amigos.Count;
             ViewData["LISTAAMIGOS"]=amigos;
             Console.WriteLine(usuario.UserName);
@@ -51,7 +48,7 @@ namespace MvcProyectoJerseys.Controllers
             ViewData["CAMISETAS"] = camisetas;
             return View(usuario);
         }
-        
+
         [AuthorizeUsers]
         [HttpPost]
         public async Task<IActionResult> PerfilUsuario(string alias, string equipo, IFormFile avatar, string? contrasena)
@@ -62,7 +59,13 @@ namespace MvcProyectoJerseys.Controllers
             {
                 string nombreArchivo = this.repo.GenerateUniqueFileName(usuario.IdUsuario, avatar);
                 await this.repo.SubirFichero(avatar, Folders.Avatar, nombreArchivo);
-                await this.serviceBlobs.DeleteBlobAsync("martes", usuario.Avatar);
+                await this.serviceBlobs.DeleteBlobAsync("camisetas", usuario.Avatar);
+            }
+            if (avatar != null)
+            {
+                string nombreArchivo = this.repo.GenerateUniqueFileName(usuario.IdUsuario, avatar);
+                await this.repo.SubirFichero(avatar, Folders.Avatar, nombreArchivo);
+                await this.serviceBlobs.DeleteBlobAsync("camisetas", usuario.Avatar); // Borra el antiguo
             }
             UsuarioUpdateDTO usuarioUpdate = new UsuarioUpdateDTO
             {
@@ -81,15 +84,9 @@ namespace MvcProyectoJerseys.Controllers
             List<Camiseta> camisetas = await this.service.GetCamisetasUsuario();
             ViewData["CAMISETAS"] = camisetas;
             return View(usuario);
-            
+
         }
-        //public async Task<IActionResult> DetalleCamiseta(int idCamiseta)
-        //{
-        //    Camiseta camiseta =await  this.repo.GetCamiseta(idCamiseta);
-        //    List<Etiqueta> etiquetas=await this.repo.GetEtiquetas(camiseta.IdCamiseta);
-        //    ViewData["ETIQUETAS"]=etiquetas;
-        //    return View(camiseta);
-        //}
+
         [AuthorizeUsers]
         public async Task<IActionResult> DetallesCamiseta(int idCamiseta)
         {
@@ -110,7 +107,7 @@ namespace MvcProyectoJerseys.Controllers
         [AuthorizeUsers]
         [ValidateAntiForgeryToken]
         [HttpPost]
-        public async Task<IActionResult>DetallesCamiseta(int idCamiseta, string texto)
+        public async Task<IActionResult> DetallesCamiseta(int idCamiseta, string texto)
         {
             List<Comentario> comentarios = await this.service.GetComentariosAsync(idCamiseta);
             Camiseta camiseta = await this.service.GetCamiseta(idCamiseta);
@@ -118,7 +115,7 @@ namespace MvcProyectoJerseys.Controllers
             ViewData["COMENTARIOS"]=comentarios;
             List<Etiqueta> etiquetas = await this.service.GetEtiquetas(idCamiseta);
             ViewData["ETIQUETAS"]=etiquetas;
-            
+
             ComentarioDTO comentarioDTO = new ComentarioDTO
             {
                 CamisetaId=idCamiseta,
@@ -127,30 +124,30 @@ namespace MvcProyectoJerseys.Controllers
             await this.service.Comentar(comentarioDTO);
             return RedirectToAction("DetallesCamiseta", new { idCamiseta });
         }
-        public async Task<IActionResult>UpdateCamiseta(int idCamiseta)
+        public async Task<IActionResult> UpdateCamiseta(int idCamiseta)
         {
             Camiseta cam = await this.service.GetCamiseta(idCamiseta);
-            
+
             List<Pais> paises = await this.service.GetPaisesAsync();
             ViewBag.Paises=paises;
             List<Etiqueta> etiquetas = await this.service.GetEtiquetas(idCamiseta);
             string[] etiquetasArray = etiquetas.Select(e => e.TxtEtiqueta).ToArray();
-            ViewData["ETIQUETAS"]=string.Join(",",etiquetasArray);
+            ViewData["ETIQUETAS"]=string.Join(",", etiquetasArray);
             return View(cam);
         }
         [AuthorizeUsers]
         [ValidateAntiForgeryToken]
         [HttpPost]
-        public async Task<IActionResult> UpdateCamiseta(int idCamiseta, string? equipo, string? pais, int? year, string? marca, string? equipacion, string? descripcion, string? condicion, int? dorsal, string?jugador, IFormFile? imagen)
+        public async Task<IActionResult> UpdateCamiseta(int idCamiseta, string? equipo, string? pais, int? year, string? marca, string? equipacion, string? descripcion, string? condicion, int? dorsal, string? jugador, IFormFile? imagen)
         {
             Usuario usuario = HttpContext.Session.GetObject<Usuario>("USUARIO");
-            
+
             Camiseta cam = await this.service.GetCamiseta(idCamiseta);
             if (imagen!=null)
             {
                 string nombreArchivo = this.repo.GenerateUniqueFileName(usuario.IdUsuario, imagen);
                 await this.repo.SubirFichero(imagen, Folders.Jerseys, nombreArchivo);
-                await this.serviceBlobs.DeleteBlobAsync("martes", cam.Imagen);
+                await this.serviceBlobs.DeleteBlobAsync("camisetas", cam.Imagen);
             }
 
             CamisetaUpdateDTO camisetaUpdateDTO = new CamisetaUpdateDTO
@@ -159,6 +156,7 @@ namespace MvcProyectoJerseys.Controllers
                 Year=year,
                 Marca=marca,
                 Condicion=condicion,
+
                 Dorsal=dorsal,
                 Jugador=jugador,
                 Descripcion=descripcion,
@@ -174,8 +172,8 @@ namespace MvcProyectoJerseys.Controllers
             ViewData["ETIQUETAS"]=string.Join(",", etiquetasArray);
             return RedirectToAction("PerfilUsuario", new { idUsuario = usuario.IdUsuario });
         }
-        
-        
+
+
 
         //[HttpPost]
         //public async Task<IActionResult> SubirImagenPerfil(IFormFile file)
@@ -193,7 +191,7 @@ namespace MvcProyectoJerseys.Controllers
 
 
         [AuthorizeUsers]
-        public async  Task<IActionResult> CreateCamiseta()
+        public async Task<IActionResult> CreateCamiseta()
         {
             List<Pais> paises = await this.service.GetPaisesAsync();
             ViewData["PAISES"]=paises;
@@ -202,11 +200,11 @@ namespace MvcProyectoJerseys.Controllers
         [AuthorizeUsers]
         [ValidateAntiForgeryToken]
         [HttpPost]
-        public async Task<IActionResult> CreateCamiseta(string equipo, string pais, int year, string marca, string equipacion, string condicion, int?dorsal, string?jugador,string? descripcion, IFormFile imagenCamiseta, string?etiquetas  )
+        public async Task<IActionResult> CreateCamiseta(string equipo, string pais, int year, string marca, string equipacion, string condicion, int? dorsal, string? jugador, string? descripcion, IFormFile imagenCamiseta, string? etiquetas)
         {
             Usuario usuario = HttpContext.Session.GetObject<Usuario>("USUARIO");
             //IDCAMISETA, ESACTIVA, FECHA SUBIDA, IDUSUARIO,
-            
+
             string filename = this.repo.GenerateUniqueFileName(usuario.IdUsuario, imagenCamiseta);
             await this.repo.SubirFichero(imagenCamiseta, Folders.Jerseys, filename);
 
@@ -223,32 +221,32 @@ namespace MvcProyectoJerseys.Controllers
                 Descripcion=descripcion,
                 Imagen=filename
             };
-            int idCamiseta=await this.service.SubirCamiseta(camisetaCreateDTO);
+            int idCamiseta = await this.service.SubirCamiseta(camisetaCreateDTO);
             //await this.service.UploadBlobAsync("martes",imagenCamiseta.FileName,imagenCamiseta.OpenReadStream());
             if (etiquetas!=null)
             {
-                List<string> listaEtiquetas = etiquetas.ToUpper().Split(',').Select(e=>e.Trim()).ToList();
+                List<string> listaEtiquetas = etiquetas.ToUpper().Split(',').Select(e => e.Trim()).ToList();
                 Console.Write(listaEtiquetas);
                 await this.service.InsertEtiquetas(listaEtiquetas, idCamiseta);
             }
             List<Pais> paises = await this.service.GetPaisesAsync();
             ViewData["PAISES"]=paises;
             return RedirectToAction("PerfilUsuario");
-        }   
+        }
 
         [AuthorizeUsers]
-        public async Task<IActionResult>AgregarAmigo(int idAmigo)
+        public async Task<IActionResult> AgregarAmigo(int idAmigo)
         {
 
             //Usuario usuario = HttpContext.Session.GetObject<Usuario>("USUARIO");
-            if (await this.service.AreAlreadyFriends( idAmigo))
+            if (await this.service.AreAlreadyFriends(idAmigo))
             {
                 TempData["ERROR"]="YA SOIS AMIGOS";
                 return View();
             }
             else
             {
-                await this.service.SetAmistad( idAmigo);
+                await this.service.SetAmistad(idAmigo);
                 return RedirectToAction("PerfilUsuario");
             }
         }
@@ -259,7 +257,7 @@ namespace MvcProyectoJerseys.Controllers
         }
         [AuthorizeUsers]
         [HttpPost]
-        public async Task<IActionResult>BuscarAmigo(string codigoAmigo)
+        public async Task<IActionResult> BuscarAmigo(string codigoAmigo)
         {
             Usuario usuario = HttpContext.Session.GetObject<Usuario>("USUARIO");
             var amigo = await this.service.FindUsuarioAmistadCode(codigoAmigo);
@@ -269,7 +267,7 @@ namespace MvcProyectoJerseys.Controllers
                 TempData["ERROR"]="No puedes agregarte a ti mismo.";
                 return View();
             }
-            else if(amigo==null)
+            else if (amigo==null)
             {
                 TempData["ERROR"]="No se han encontrado resultados";
                 return View();
@@ -294,7 +292,7 @@ namespace MvcProyectoJerseys.Controllers
         }
 
         [AuthorizeUsers]
-        public async Task<IActionResult>DeleteCamiseta(int idCamiseta)
+        public async Task<IActionResult> DeleteCamiseta(int idCamiseta)
         {
             await this.service.DeleteCamiseta(idCamiseta);
             return RedirectToAction("PerfilUsuario");

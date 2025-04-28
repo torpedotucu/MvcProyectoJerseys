@@ -74,7 +74,7 @@ namespace MvcProyectoJerseys.Services
         {
             BlobContainerClient containerClient = this.client.GetBlobContainerClient(containerName);
 
-            await containerClient.DeleteBlobAsync(blobName);
+            await containerClient.DeleteBlobIfExistsAsync(blobName);
         }
 
         //METODO PARA SUBIR UN BLOB A UN CONTAINER
